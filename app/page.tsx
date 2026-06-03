@@ -2,14 +2,15 @@ import SignalRoot from "@/components/SignalRoot";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Felipe Mejia | Product, Growth & AI Systems",
-  description:
-    "Felipe Mejia builds AI-enabled products and growth systems. 12+ years from 0→1 across telecoms, SaaS and e-commerce. Product, growth and AI consulting.",
+  title: "Felipe OS | Product, Growth & AI Systems",
+  description: "AI-powered systems, automation, growth infrastructure and product builds by Felipe Mejia.",
   keywords: [
     "AI product consultant",
     "growth product manager",
     "agentic workflows",
     "AI workflow automation",
+    "AI assistants",
+    "Felipe OS",
     "product analytics consultant",
     "0 to 1 product builder",
     "SaaS growth strategy",

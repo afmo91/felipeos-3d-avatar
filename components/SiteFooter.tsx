@@ -1,4 +1,5 @@
 import Link from "next/link";
+import CookiePreferencesButton from "@/components/CookiePreferencesButton";
 import { getBaseCV } from "@/lib/cv";
 
 export default function SiteFooter() {
@@ -24,11 +25,8 @@ export default function SiteFooter() {
   return (
     <footer className="border-t border-white/10 px-6 py-10 text-sm text-gray-400 md:px-10">
       <div className="mx-auto flex max-w-7xl flex-col justify-between gap-5 md:flex-row md:items-center">
-        <p>&copy; {new Date().getFullYear()} Felipe Mejia. All rights reserved.</p>
+        <p>&copy; {new Date().getFullYear()} Felipe OS. All rights reserved.</p>
         <nav aria-label="Footer links" className="flex flex-wrap gap-x-5 gap-y-2">
-          <Link className="footer-link" href="/contact">
-            Contact
-          </Link>
           {socialLinks.map((link) => (
             <a
               aria-label={link.label}
@@ -41,6 +39,10 @@ export default function SiteFooter() {
               {link.text}
             </a>
           ))}
+          <Link className="footer-link" href="/admin">
+            Admin
+          </Link>
+          <CookiePreferencesButton />
         </nav>
       </div>
     </footer>

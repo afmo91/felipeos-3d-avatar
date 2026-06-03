@@ -1,10 +1,8 @@
 {
   "name": "Felipe Mejia",
-  "title": "Freelance Product & Growth Leader | 0→1 Builder",
+  "title": "Product & Growth Leader | AI Systems Builder",
   "summary": [
-    "Product & Growth leader with 12+ years of experience across telecom, e-commerce and B2B SaaS.",
-    "Freelance operator for teams that need to turn ambiguity into shipped outcomes: discovery, prioritization, delivery cadence, and measurable growth.",
-    "Strong analytics + observability mindset, instrumenting lifecycle metrics to guide product and commercial decisions."
+    "Product & Growth leader with 12+ years of experience across telecom, e-commerce and B2B SaaS. I build AI-powered systems, growth engines, dashboards and automation workflows that help teams ship faster, measure better and scale."
   ],
   "contact": {
     "email": "felipe.mejia@spotz.pro",
@@ -20,35 +18,85 @@
   "experience": [
     {
       "company": "Spotz.pro",
-      "role": "Product Builder",
-      "caseStudyHref": "/portfolio#portfolio-spotz-ai-ads-operating-layer",
-      "metrics": ["AI ads platform", "6 channels", "0→1 delivery"],
+      "role": "Founder / Product Builder",
+      "caseStudyHref": "/#proof-of-work",
+      "metrics": ["AI SaaS platform", "6 paid media channels", "0->1 product build"],
       "bullets": [
-        "Built an AI-powered multi-channel advertising platform across Google, Meta, LinkedIn, TikTok, X and Pinterest.",
-        "Shipped a unified dashboard for workflows + performance monitoring; introduced observability across channels.",
-        "Tested freemium + usage pricing; instrumented activation and retention; iterated based on lifecycle data.",
-        "Led end-to-end delivery: specs, cross-functional alignment, API integrations, QA and releases."
+        "Built an AI-powered SaaS platform for managing and optimizing paid media workflows across Google, Meta, LinkedIn, TikTok, X and Pinterest.",
+        "Designed dashboards, API integrations, lifecycle metrics and AI recommendation workflows.",
+        "Tested freemium and usage-based pricing models.",
+        "Led product discovery, specs, implementation, QA and release management."
       ]
     },
     {
       "company": "Adamo Telecom",
-      "role": "Growth Product Manager",
-      "caseStudyHref": "/portfolio#portfolio-adamo-digital-onboarding",
-      "metrics": ["same-day activation", "~15% churn reduction", "+25% conversion", "-30% CAC", "€200K+ recovered", "€3M+ budget"],
+      "role": "Growth Product Manager / Digital Acquisition",
+      "caseStudyHref": "/#proof-of-work",
+      "metrics": ["500K+ customers", "EUR3M+ annual media budget", "+25% conversion", "-30% CAC", "same-day activation"],
       "bullets": [
-        "Unified customer data across Salesforce and marketing stack for full-funnel visibility.",
-        "Migrated legacy onboarding to digital-first; aligned engineering/data/commercial teams across Spain; reduced activation from 5 days to same-day.",
-        "Redesigned onboarding to reduce churn by ~15%.",
-        "Introduced attribution modeling and recovered €200K+ in wasted spend; dashboards used in weekly C-level decisions.",
-        "Built experimentation cadence (+25% conversion, -30% CAC); owned €3M+ annual budget across Google Ads, Meta Ads, programmatic."
+        "Led digital acquisition and growth product initiatives for a telecom operator with 500K+ customers.",
+        "Managed EUR3M+ annual performance marketing budget across Google Ads, Meta Ads and programmatic.",
+        "Improved conversion by 25% and reduced CAC by 30% through experimentation.",
+        "Reduced onboarding time from 5 days to same-day activation.",
+        "Reduced first-month churn by 15% through onboarding improvements.",
+        "Recovered EUR200K+ in wasted spend with attribution and performance monitoring."
+      ]
+    },
+    {
+      "company": "Segmentta",
+      "role": "Co-founder / Product & Growth Consultant",
+      "caseStudyHref": "/#experience",
+      "metrics": ["30+ institutional clients", "EUR500K+ annual revenue", "team of 10"],
+      "bullets": [
+        "Co-founded and scaled a B2B consulting business serving institutional clients in regulated markets.",
+        "Worked with 30+ institutional clients including healthcare and enterprise companies.",
+        "Built and managed a team of 10 across commercial, logistics and marketing operations.",
+        "Grew annual revenue to EUR500K+ before exiting through sale of ownership stake."
+      ]
+    },
+    {
+      "company": "Consulting / AI Systems",
+      "role": "Product, Growth & Automation",
+      "caseStudyHref": "/#services",
+      "metrics": ["AI assistants", "agentic workflows", "automation systems", "growth infrastructure"],
+      "bullets": [
+        "Design and build AI assistants, agentic workflows, API integrations, automation systems and growth infrastructure.",
+        "Work across B2B lead generation, support automation, CMS/CRM systems, WhatsApp lead capture, AI admin assistants and performance marketing systems."
       ]
     }
   ],
+  "selectedAchievements": [
+    "Built a 0->1 AI SaaS platform for multi-channel paid media workflows.",
+    "Managed EUR3M+ annual performance marketing budget across Google Ads, Meta Ads and programmatic.",
+    "Improved conversion by 25% and reduced CAC by 30% through experimentation.",
+    "Reduced onboarding time from 5 days to same-day activation.",
+    "Recovered EUR200K+ in wasted spend with attribution and performance monitoring.",
+    "Co-founded and scaled a B2B consulting business to EUR500K+ annual revenue before exit."
+  ],
   "skills": {
-    "Product": ["discovery", "prioritization", "roadmapping", "AI product strategy", "builder mindset"],
-    "Growth": ["PLG funnels", "onboarding", "experimentation", "pricing tests", "CAC/CLV"],
-    "Analytics/Ops": ["attribution", "dashboards", "observability", "lifecycle instrumentation"],
-    "Leadership": ["cross-functional cadence", "stakeholder management"],
-    "Tools": ["GA4", "Mixpanel", "Tableau", "SQL", "Salesforce", "HubSpot", "Jira", "Asana"]
-  }
+    "Product": ["discovery", "prioritization", "roadmapping", "AI product strategy", "0->1 product building"],
+    "Growth": ["paid acquisition", "funnel optimization", "experimentation", "pricing", "CAC/ROAS", "attribution"],
+    "AI/Automation": ["AI assistants", "agentic workflows", "process automation", "API integrations", "document workflows"],
+    "Analytics": ["dashboards", "lifecycle metrics", "observability", "CRM and campaign reporting"],
+    "Leadership": ["stakeholder management", "cross-functional execution", "C-level communication"]
+  },
+  "tools": [
+    "Google Ads",
+    "Meta Ads",
+    "GA4",
+    "Looker/Data Studio",
+    "Tableau",
+    "Mixpanel",
+    "Salesforce",
+    "HubSpot",
+    "Zoho",
+    "SQL",
+    "APIs",
+    "Notion",
+    "Google Workspace",
+    "OpenAI/LLM tools",
+    "Next.js",
+    "Vercel"
+  ],
+  "languages": ["Spanish native", "French fluent", "English fluent"]
 }

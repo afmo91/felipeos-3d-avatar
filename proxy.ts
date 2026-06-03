@@ -2,6 +2,10 @@ import { getToken } from "next-auth/jwt";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function proxy(request: NextRequest) {
+  if (request.nextUrl.pathname === "/cv") {
+    return NextResponse.next();
+  }
+
   const token = await getToken({ req: request, secret: process.env.AUTH_SECRET });
 
   if (token) {
@@ -13,4 +17,4 @@ export async function proxy(request: NextRequest) {
   return NextResponse.redirect(loginUrl);
 }
 
-export const config = { matcher: ["/cv", "/cv/:path*"] };
+export const config = { matcher: ["/cv/:path*"] };

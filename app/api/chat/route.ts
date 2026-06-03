@@ -1,5 +1,5 @@
-import { FELIPE_SYSTEM_PROMPT, detectTopic } from "@/lib/conversation";
-import type { ConvTopic } from "@/lib/conversation";
+import { FELIPE_SYSTEM_PROMPT, detectTopic, localFallbackReply } from "@/lib/conversation";
+import type { VisualTopic } from "@/lib/conversation";
 
 export const runtime = "nodejs";
 
@@ -47,7 +47,7 @@ export async function POST(request: Request) {
     const data = (await res.json()) as { choices: { message: { content: string } }[] };
     const parsed = JSON.parse(data.choices[0]?.message?.content ?? "{}") as {
       reply?: string;
-      topic?: ConvTopic;
+      topic?: VisualTopic;
     };
 
     return Response.json({
@@ -60,26 +60,7 @@ export async function POST(request: Request) {
 }
 
 function fallbackReply(message: string): string {
-  const t = message.toLowerCase();
-  if (t.includes("github")) {
-    return "My GitHub is https://github.com/afmo91. Want the CV or LinkedIn too?";
-  }
-  if (t.includes("linkedin")) {
-    return "My LinkedIn is https://www.linkedin.com/in/felipemejiaosorio/. Want to connect there or use email?";
-  }
-  if (t.includes("email") || t.includes("contact") || t.includes("reach")) {
-    return "Email me at felipe.mejia@spotz.pro, or connect on LinkedIn. What would you like to discuss?";
-  }
-  if (t.includes("cv") || t.includes("resume")) {
-    return "The CV is at /cv, with the current structured version of my work. Are you reviewing for hiring or consulting?";
-  }
-  if (t.includes("result") || t.includes("number")) {
-    return "+25% conversion, €200K+ recovered, same-day activation. All measured. Want to go deeper on any of these?";
-  }
-  if (t.includes("ai") || t.includes("agent")) {
-    return "I build AI layers that classify work, surface exceptions and feed decisions back into dashboards. What's the workflow you're trying to instrument?";
-  }
-  return "Good question — tell me more about the context and I'll give you the honest version.";
+  return localFallbackReply(message).reply;
 }
 
 function fallback(message: string) {

@@ -29,7 +29,10 @@ export type BaseCV = {
   summary: string[];
   contact: CVContact;
   experience: CVExperience[];
+  selectedAchievements?: string[];
   skills: Record<string, string[]>;
+  tools?: string[];
+  languages?: string[];
 };
 
 export type CVTweak = {

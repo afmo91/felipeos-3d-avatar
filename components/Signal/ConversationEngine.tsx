@@ -2,23 +2,42 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
+  INITIAL_ASSISTANT_TEXT,
+  INITIAL_CHIPS,
   SCRIPTED_AUDIO_FILES,
-  STEPS,
+  STORAGE_KEY,
+  actionsForTopic,
+  defaultStage,
   detectTopic,
+  inferPlanCategory,
+  initialRoute,
   isAudioOptIn,
   isAudioOptOut,
-  nextStep,
-  type ConvState,
-  type ConvTopic,
+  localFallbackReply,
+  visualTopicForStage,
+  wantsSolutionBuilder,
+  type ChatAction,
   type Message,
-  type ScriptedStep,
+  type PersistedConversation,
+  type StageState,
+  type VisualTopic,
 } from "@/lib/conversation";
+import {
+  audienceOptions,
+  buildSolutionPlan,
+  planCategories,
+  timelineOptions,
+  toolOptions,
+  type BuilderDraft,
+  type PlanCategory,
+} from "@/data/solutionPlans";
+import { getBookingHref, hasBookingUrl } from "@/lib/booking";
 import type { BustState } from "./BustScene";
 
 let msgCounter = 0;
 function uid() {
   msgCounter += 1;
-  return `msg-${msgCounter}`;
+  return `msg-${Date.now()}-${msgCounter}`;
 }
 
 function sleep(ms: number) {
@@ -31,7 +50,77 @@ type Playback = {
 
 function estimateDuration(text: string) {
   const words = text.trim().split(/\s+/).filter(Boolean).length;
-  return Math.max(900, (words / 2.9) * 1000);
+  return Math.max(650, (words / 3.4) * 1000);
+}
+
+function normalize(input: string) {
+  return input
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}\s/+-]/gu, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function findOption<T extends string>(input: string, options: readonly T[]) {
+  const normalized = normalize(input);
+  return options.find((option) => normalize(option) === normalized);
+}
+
+function parseTools(input: string) {
+  const selected = findOption(input, toolOptions);
+  if (selected && selected !== "Other") return [selected];
+  if (selected === "Other") return ["Other"];
+
+  return input
+    .split(/,|\+|\/|\band\b/gi)
+    .map((item) => item.trim())
+    .filter(Boolean)
+    .slice(0, 8);
+}
+
+function extractContactDetails(input: string) {
+  const email = input.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i)?.[0]?.toLowerCase();
+  const website = input.match(/https?:\/\/[^\s]+|(?:www\.)[^\s]+/i)?.[0];
+  const withoutEmail = email ? input.replace(email, "").trim() : input.trim();
+  const withoutWebsite = website ? withoutEmail.replace(website, "").trim() : withoutEmail;
+  const parts = withoutWebsite
+    .split(/,|\||-/)
+    .map((part) => part.trim())
+    .filter(Boolean);
+
+  return {
+    email,
+    name: parts[0],
+    company: parts[1],
+    website,
+  };
+}
+
+function summarizeChat(messages: Message[]) {
+  return messages
+    .slice(-8)
+    .map((message) => `${message.role === "user" ? "User" : "Felipe"}: ${message.text}`)
+    .join("\n")
+    .slice(0, 1100);
+}
+
+function cloneDefaultStage(): StageState {
+  return {
+    ...defaultStage,
+    builderDraft: {},
+  };
+}
+
+function readPersisted(): PersistedConversation | null {
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as PersistedConversation;
+    if (!Array.isArray(parsed.messages) || !parsed.stage) return null;
+    return parsed;
+  } catch {
+    return null;
+  }
 }
 
 function useVoice() {
@@ -179,28 +268,34 @@ export type ConvHook = {
   messages: Message[];
   suggestions: string[];
   bustState: BustState;
-  topic: ConvTopic;
+  visualTopic: VisualTopic;
+  stage: StageState;
   isLoading: boolean;
   audioEnabled: boolean;
   amplitudeRef: React.RefObject<number>;
+  handleAction: (action: ChatAction) => void;
   handleAssembled: () => void;
+  resetConversation: () => void;
   sendMessage: (text: string) => void;
   toggleAudio: () => void;
 };
 
 export function useConversation(): ConvHook {
-  const [convState, setConvState] = useState<ConvState>("welcome");
   const [messages, setMessages] = useState<Message[]>([]);
   const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [stage, setStage] = useState<StageState>(() => cloneDefaultStage());
+  const [visualTopic, setVisualTopic] = useState<VisualTopic>("neutral");
   const [bustState, setBustState] = useState<BustState>("assembling");
-  const [topic, setTopic] = useState<ConvTopic>("neutral");
   const [isLoading, setLoading] = useState(false);
   const [audioEnabled, setAudioEnabled] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
+  const [assembled, setAssembled] = useState(false);
 
   const audioEnabledRef = useRef(false);
   const busyRef = useRef(false);
   const startedRef = useRef(false);
-  const playedClipsRef = useRef(new Set<string>());
+  const messagesRef = useRef<Message[]>([]);
+  const stageRef = useRef<StageState>(cloneDefaultStage());
   const historyRef = useRef<{ role: "user" | "assistant"; content: string }[]>([]);
 
   const { amplitudeRef, playTts, playUrl, stopAudio, unlockAudio } = useVoice();
@@ -210,11 +305,54 @@ export function useConversation(): ConvHook {
   }, [audioEnabled]);
 
   useEffect(() => {
+    messagesRef.current = messages;
+  }, [messages]);
+
+  useEffect(() => {
+    stageRef.current = stage;
+  }, [stage]);
+
+  useEffect(() => {
     SCRIPTED_AUDIO_FILES.forEach((src) => {
       const clip = new Audio(src);
       clip.preload = "auto";
     });
   }, []);
+
+  useEffect(() => {
+    const saved = readPersisted();
+    if (saved) {
+      setMessages(saved.messages);
+      setSuggestions(saved.suggestions ?? []);
+      setStage({
+        ...cloneDefaultStage(),
+        ...saved.stage,
+        builderDraft: saved.stage.builderDraft ?? {},
+      });
+      setVisualTopic(saved.visualTopic ?? visualTopicForStage(saved.stage.activeTopic));
+      historyRef.current = saved.messages
+        .filter((message) => message.text)
+        .map((message) => ({
+          role: message.role === "user" ? "user" : "assistant",
+          content: message.text,
+        }));
+      startedRef.current = saved.messages.length > 0;
+    }
+    setHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    window.localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        messages,
+        suggestions,
+        stage,
+        visualTopic,
+      } satisfies PersistedConversation),
+    );
+  }, [hydrated, messages, stage, suggestions, visualTopic]);
 
   const setAudio = useCallback(
     (enabled: boolean) => {
@@ -231,32 +369,38 @@ export function useConversation(): ConvHook {
 
   const typewrite = useCallback(async (msgId: string, text: string) => {
     const total = text.length;
-    const interval = Math.max(12, Math.min(42, estimateDuration(text) / Math.max(total, 1)));
+    const interval = Math.max(10, Math.min(34, estimateDuration(text) / Math.max(total, 1)));
 
     for (let index = 1; index <= total; index += 1) {
-      setMessages((prev) => prev.map((msg) => (msg.id === msgId ? { ...msg, text: text.slice(0, index) } : msg)));
+      setMessages((prev) =>
+        prev.map((msg) => (msg.id === msgId ? { ...msg, text: text.slice(0, index) } : msg)),
+      );
       await sleep(interval);
     }
   }, []);
 
   const deliverFelipe = useCallback(
     async (
-      payload: Pick<ScriptedStep, "text" | "topic" | "suggestedReplies" | "voiceFile" | "action">,
+      payload: {
+        text: string;
+        topic: VisualTopic;
+        suggestedReplies?: string[];
+        actionButtons?: ChatAction[];
+        voiceFile?: string;
+      },
       options: { dynamicTts?: boolean; forceSilent?: boolean } = {},
     ) => {
-      const replies = payload.suggestedReplies.slice(0, 3);
       const msgId = uid();
       const message: Message = {
+        actionButtons: [],
         id: msgId,
         role: "felipe",
+        suggestedReplies: [],
         text: "",
         topic: payload.topic,
-        voiceFile: payload.voiceFile,
-        suggestedReplies: [],
-        action: payload.action,
       };
 
-      setTopic(payload.topic);
+      setVisualTopic(payload.topic);
       setBustState("speaking");
       setSuggestions([]);
       setMessages((prev) => [...prev, message]);
@@ -266,10 +410,9 @@ export function useConversation(): ConvHook {
         if (!shouldPlay) return;
 
         let playback: Playback | null = null;
-        if (payload.voiceFile && !playedClipsRef.current.has(payload.voiceFile)) {
+        if (payload.voiceFile) {
           playback = await playUrl(payload.voiceFile);
-          if (playback) playedClipsRef.current.add(payload.voiceFile);
-        } else if (!payload.voiceFile && options.dynamicTts) {
+        } else if (options.dynamicTts) {
           playback = await playTts(payload.text);
         }
 
@@ -278,7 +421,11 @@ export function useConversation(): ConvHook {
 
       await Promise.all([typewrite(msgId, payload.text), playbackPromise]);
 
-      setMessages((prev) => prev.map((msg) => (msg.id === msgId ? { ...msg, suggestedReplies: replies } : msg)));
+      const replies = payload.suggestedReplies ?? [];
+      const actionButtons = payload.actionButtons ?? [];
+      setMessages((prev) =>
+        prev.map((msg) => (msg.id === msgId ? { ...msg, actionButtons, suggestedReplies: replies } : msg)),
+      );
       setSuggestions(replies);
       historyRef.current.push({ role: "assistant", content: payload.text });
       setBustState("listening");
@@ -286,34 +433,274 @@ export function useConversation(): ConvHook {
     [playTts, playUrl, typewrite],
   );
 
-  const deliverStep = useCallback(
-    async (state: ConvState, options?: { forceSilent?: boolean }) => {
-      const step = STEPS[state];
-      if (!step.text) return;
-      setConvState(state);
-      await deliverFelipe(step, options);
-    },
-    [deliverFelipe],
-  );
-
-  const handleAssembled = useCallback(() => {
+  const deliverInitial = useCallback(async () => {
     if (startedRef.current) return;
     startedRef.current = true;
-    setBustState("idle");
+    await deliverFelipe(
+      {
+        text: INITIAL_ASSISTANT_TEXT,
+        topic: "neutral",
+        suggestedReplies: INITIAL_CHIPS,
+      },
+      { forceSilent: true },
+    );
+  }, [deliverFelipe]);
+
+  useEffect(() => {
+    if (!hydrated || !assembled || startedRef.current || messagesRef.current.length > 0) return;
     void (async () => {
-      await sleep(450);
-      await deliverStep("welcome", { forceSilent: true });
+      await sleep(300);
+      await deliverInitial();
     })();
-  }, [deliverStep]);
+  }, [assembled, deliverInitial, hydrated]);
+
+  const handleAssembled = useCallback(() => {
+    setAssembled(true);
+    setBustState("idle");
+  }, []);
 
   const toggleAudio = useCallback(() => {
     setAudio(!audioEnabledRef.current);
   }, [setAudio]);
 
+  const updateStage = useCallback((patch: Partial<StageState>) => {
+    setStage((current) => {
+      const next = {
+        ...current,
+        ...patch,
+        builderDraft: patch.builderDraft ?? current.builderDraft,
+      };
+      setVisualTopic(visualTopicForStage(next.activeTopic));
+      return next;
+    });
+  }, []);
+
+  const askBuilderUseCase = useCallback(
+    async (draft: BuilderDraft = {}) => {
+      updateStage({
+        activeTopic: "solutionBuilder",
+        builderDraft: draft,
+        builderStep: "useCase",
+        generatedPlan: undefined,
+        guidedMode: true,
+      });
+      setLoading(false);
+      await deliverFelipe(
+        {
+          text: "Let's build a useful first plan. What do you want to improve or automate?",
+          topic: "ai",
+          suggestedReplies: planCategories,
+        },
+        { dynamicTts: true },
+      );
+    },
+    [deliverFelipe, updateStage],
+  );
+
+  const askBuilderTools = useCallback(
+    async (draft: BuilderDraft) => {
+      updateStage({
+        activeTopic: "solutionBuilder",
+        builderDraft: draft,
+        builderStep: "tools",
+        guidedMode: true,
+      });
+      setLoading(false);
+      await deliverFelipe(
+        {
+          text: "Good. What tools does this workflow touch today?",
+          topic: "ai",
+          suggestedReplies: toolOptions,
+        },
+        { dynamicTts: true },
+      );
+    },
+    [deliverFelipe, updateStage],
+  );
+
+  const askBuilderAudience = useCallback(
+    async (draft: BuilderDraft) => {
+      updateStage({
+        activeTopic: "solutionBuilder",
+        builderDraft: draft,
+        builderStep: "audience",
+        guidedMode: true,
+      });
+      setLoading(false);
+      await deliverFelipe(
+        {
+          text: "Who is the workflow for?",
+          topic: "product",
+          suggestedReplies: audienceOptions,
+        },
+        { dynamicTts: true },
+      );
+    },
+    [deliverFelipe, updateStage],
+  );
+
+  const askBuilderTimeline = useCallback(
+    async (draft: BuilderDraft) => {
+      updateStage({
+        activeTopic: "solutionBuilder",
+        builderDraft: draft,
+        builderStep: "timeline",
+        guidedMode: true,
+      });
+      setLoading(false);
+      await deliverFelipe(
+        {
+          text: "What timeline are you considering?",
+          topic: "product",
+          suggestedReplies: timelineOptions,
+        },
+        { dynamicTts: true },
+      );
+    },
+    [deliverFelipe, updateStage],
+  );
+
+  const finishBuilderPreview = useCallback(
+    async (draft: BuilderDraft) => {
+      const generatedPlan = buildSolutionPlan(draft);
+      updateStage({
+        activeTopic: "solutionBuilder",
+        builderDraft: draft,
+        builderStep: "idle",
+        generatedPlan,
+        guidedMode: true,
+      });
+      setLoading(false);
+      await deliverFelipe(
+        {
+          text:
+            "I drafted a local preview plan. It is enough to discuss scope before saving anything or booking a first sprint.",
+          topic: "ai",
+          actionButtons: [
+            { type: "save_plan", label: "Save plan" },
+            { type: "book", label: "Book a 30-min call" },
+            { type: "stage", label: "See services", topic: "services" },
+          ],
+        },
+        { dynamicTts: true },
+      );
+    },
+    [deliverFelipe, updateStage],
+  );
+
+  const handleBuilderAnswer = useCallback(
+    async (input: string) => {
+      const current = stageRef.current;
+      const draft = current.builderDraft;
+
+      if (current.builderStep === "useCase") {
+        const useCase = findOption(input, planCategories) ?? inferPlanCategory(input) ?? "Other";
+        await askBuilderTools({ ...draft, useCase });
+        return;
+      }
+
+      if (current.builderStep === "tools") {
+        await askBuilderAudience({ ...draft, tools: parseTools(input) });
+        return;
+      }
+
+      if (current.builderStep === "audience") {
+        await askBuilderTimeline({ ...draft, audience: findOption(input, audienceOptions) ?? input.slice(0, 80) });
+        return;
+      }
+
+      if (current.builderStep === "timeline") {
+        await finishBuilderPreview({ ...draft, timeline: findOption(input, timelineOptions) ?? input.slice(0, 80) });
+      }
+    },
+    [askBuilderAudience, askBuilderTimeline, askBuilderTools, finishBuilderPreview],
+  );
+
+  const saveLeadFromEmail = useCallback(
+    async (input: string) => {
+      const details = extractContactDetails(input);
+
+      if (!details.email) {
+        setLoading(false);
+        await deliverFelipe(
+          {
+            text: "I need an email to save and follow up on the plan. You can also book directly if that is easier.",
+            topic: "contact",
+            actionButtons: [
+              { type: "book", label: "Book a 30-min call" },
+              { type: "email", label: "Email Felipe" },
+            ],
+          },
+          { dynamicTts: true },
+        );
+        updateStage({ builderStep: "email" });
+        return;
+      }
+
+      const current = stageRef.current;
+      const draft = {
+        ...current.builderDraft,
+        company: details.company,
+        email: details.email,
+        name: details.name,
+        website: details.website,
+      };
+      updateStage({ builderDraft: draft, builderStep: "idle", guidedMode: true });
+
+      const response = await fetch("/api/leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chatSummary: summarizeChat(messagesRef.current),
+          company: draft.company,
+          email: draft.email,
+          generatedPlan: current.generatedPlan,
+          name: draft.name,
+          problemSummary: draft.useCase,
+          serviceInterest: draft.serviceInterest,
+          timeline: draft.timeline,
+          tools: draft.tools,
+          useCase: draft.useCase,
+          website: draft.website,
+        }),
+      }).catch(() => null);
+
+      setLoading(false);
+
+      if (!response?.ok) {
+        await deliverFelipe(
+          {
+            text: "I couldn't save it, but you can still book a call.",
+            topic: "contact",
+            actionButtons: [
+              { type: "book", label: "Book a 30-min call" },
+              { type: "email", label: "Email Felipe" },
+            ],
+          },
+          { dynamicTts: true },
+        );
+        return;
+      }
+
+      await deliverFelipe(
+        {
+          text: "Saved. The best next step is a 30-minute call to confirm workflow, tools and first sprint scope.",
+          topic: "contact",
+          actionButtons: [
+            { type: "book", label: "Open calendar" },
+            { type: "email", label: "Email Felipe" },
+          ],
+        },
+        { dynamicTts: true },
+      );
+    },
+    [deliverFelipe, updateStage],
+  );
+
   const sendMessage = useCallback(
     (text: string) => {
       const input = text.trim();
-      if (!input || busyRef.current) return;
+      if (!input || busyRef.current || !hydrated) return;
 
       busyRef.current = true;
 
@@ -331,52 +718,159 @@ export function useConversation(): ConvHook {
       setBustState("thinking");
 
       void (async () => {
-        const target = nextStep(input, convState);
-
         try {
-          if (target === "freeform") {
-            await sleep(650);
-            const response = await fetch("/api/chat", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ message: input, history: historyRef.current.slice(-6) }),
-            });
-            const data = (await response.json().catch(() => ({}))) as { reply?: string; topic?: ConvTopic };
-            const reply = data.reply ?? "Good question — tell me more about the context and I'll give you the honest version.";
-            const nextTopic = data.topic ?? detectTopic(input);
-            setConvState("freeform");
+          await sleep(280);
+
+          const current = stageRef.current;
+          if (current.builderStep === "email") {
+            await saveLeadFromEmail(input);
+            return;
+          }
+
+          if (current.builderStep !== "idle") {
+            await handleBuilderAnswer(input);
+            return;
+          }
+
+          const routed = initialRoute(input);
+          if (routed) {
             setLoading(false);
             await deliverFelipe(
               {
-                text: reply,
-                topic: nextTopic,
-                suggestedReplies: STEPS.freeform.suggestedReplies,
+                actionButtons: routed.actions,
+                text: routed.text,
+                topic: routed.topic,
               },
               { dynamicTts: true },
             );
-          } else {
-            await sleep(target === "free" ? 300 : 520);
-            setLoading(false);
-            await deliverStep(target, { forceSilent: target === "free" });
+            return;
           }
+
+          if (wantsSolutionBuilder(input)) {
+            await askBuilderUseCase({
+              useCase: inferPlanCategory(input),
+            });
+            return;
+          }
+
+          const response = await fetch("/api/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message: input, history: historyRef.current.slice(-6) }),
+          }).catch(() => null);
+          const data = (await response?.json().catch(() => null)) as
+            | { reply?: string; topic?: VisualTopic }
+            | null;
+          const fallback = localFallbackReply(input);
+          const reply = data?.reply ?? fallback.reply;
+          const topic = data?.topic ?? fallback.topic ?? detectTopic(input);
+          setLoading(false);
+          await deliverFelipe(
+            {
+              actionButtons: actionsForTopic(topic).slice(0, 3),
+              text: reply,
+              topic,
+            },
+            { dynamicTts: true },
+          );
         } finally {
           setLoading(false);
           busyRef.current = false;
         }
       })();
     },
-    [convState, deliverFelipe, deliverStep, setAudio],
+    [askBuilderUseCase, deliverFelipe, handleBuilderAnswer, hydrated, saveLeadFromEmail, setAudio],
   );
+
+  const handleAction = useCallback(
+    (action: ChatAction) => {
+      if (action.type === "stage") {
+        updateStage({
+          activeTopic: action.topic,
+          selectedProofCase: action.selectedProofCase ?? stageRef.current.selectedProofCase,
+          selectedService: action.selectedService ?? stageRef.current.selectedService,
+        });
+        return;
+      }
+
+      if (action.type === "start_builder") {
+        void askBuilderUseCase({
+          serviceInterest: action.selectedService,
+          useCase: action.seedUseCase,
+        } as BuilderDraft);
+        return;
+      }
+
+      if (action.type === "save_plan") {
+        updateStage({ activeTopic: "solutionBuilder", builderStep: "email", guidedMode: true });
+        void deliverFelipe(
+          {
+            text: "Where should I send the plan or follow-up? Share your email, and optionally your name, company or website.",
+            topic: "contact",
+          },
+          { dynamicTts: true },
+        );
+        return;
+      }
+
+      if (action.type === "book") {
+        updateStage({ activeTopic: "contact" });
+        const href = getBookingHref();
+        if (hasBookingUrl()) {
+          window.open(href, "_blank", "noopener,noreferrer");
+        } else {
+          window.location.href = href;
+        }
+        return;
+      }
+
+      if (action.type === "email") {
+        updateStage({ activeTopic: "contact" });
+        window.location.href = "mailto:felipe.mejia@spotz.pro?subject=Felipe%20OS%20project";
+        return;
+      }
+
+      if (action.type === "download_cv") {
+        updateStage({ activeTopic: "cv" });
+        window.open("/api/download/cv", "_blank", "noopener,noreferrer");
+      }
+    },
+    [askBuilderUseCase, deliverFelipe, updateStage],
+  );
+
+  const resetConversation = useCallback(() => {
+    stopAudio();
+    busyRef.current = false;
+    historyRef.current = [];
+    const nextStage = cloneDefaultStage();
+    const initialMessage: Message = {
+      id: uid(),
+      role: "felipe",
+      text: INITIAL_ASSISTANT_TEXT,
+      topic: "neutral",
+      suggestedReplies: INITIAL_CHIPS,
+    };
+    setMessages([initialMessage]);
+    setSuggestions(INITIAL_CHIPS);
+    setStage(nextStage);
+    setVisualTopic("neutral");
+    setBustState("listening");
+    startedRef.current = true;
+    window.localStorage.removeItem(STORAGE_KEY);
+  }, [stopAudio]);
 
   return {
     messages,
     suggestions,
     bustState,
-    topic,
+    visualTopic,
+    stage,
     isLoading,
     audioEnabled,
     amplitudeRef,
+    handleAction,
     handleAssembled,
+    resetConversation,
     sendMessage,
     toggleAudio,
   };

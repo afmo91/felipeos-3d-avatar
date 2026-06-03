@@ -4,20 +4,21 @@ import { Geist, Geist_Mono } from "next/font/google";
 import LayoutShell from "@/components/LayoutShell";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
+import CookieConsent from "@/components/CookieConsent";
 import { getBaseCV } from "@/lib/cv";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://felipemejia.com";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://3d.felipeos.com";
 const geist = Geist({ subsets: ["latin"], variable: "--font-geist" });
 const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono" });
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Felipe Mejia | AI Product & Growth Consultant",
-    template: "%s | Felipe Mejia",
+    default: "Felipe OS | Product, Growth & AI Systems",
+    template: "%s | Felipe OS",
   },
   description:
-    "Felipe Mejia is an AI product and growth consultant helping SaaS, telecom, and digital teams build agentic workflows, ship 0 to 1 products, instrument analytics systems, and create measurable growth loops.",
+    "AI-powered systems, automation, growth infrastructure and product builds by Felipe Mejia.",
   keywords: [
     "Felipe Mejia",
     "freelance product consultant",
@@ -25,6 +26,9 @@ export const metadata: Metadata = {
     "AI product strategy",
     "agentic AI workflows",
     "AI workflow automation",
+    "AI assistants",
+    "systems integrations",
+    "Felipe OS",
     "SaaS growth",
     "product-led growth",
     "analytics instrumentation",
@@ -32,9 +36,9 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     description:
-      "AI product and growth support for agentic workflows, experimentation, analytics, PLG, and digital onboarding.",
-    siteName: "Felipe Mejia",
-    title: "Felipe Mejia | AI Product & Growth Consultant",
+      "AI-powered systems, automation, growth infrastructure and product builds by Felipe Mejia.",
+    siteName: "Felipe OS",
+    title: "Felipe OS | Product, Growth & AI Systems",
     type: "website",
     url: siteUrl,
   },
@@ -44,8 +48,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     description:
-      "AI product and growth support for agentic workflows, experimentation, analytics, PLG, and digital onboarding.",
-    title: "Felipe Mejia | AI Product & Growth Consultant",
+      "AI-powered systems, automation, growth infrastructure and product builds by Felipe Mejia.",
+    title: "Felipe OS | Product, Growth & AI Systems",
   },
 };
 
@@ -65,32 +69,32 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       {
         "@type": "ProfessionalService",
         email: contact.email,
-        name: "Felipe Mejia Product & Growth Consulting",
+        name: "Felipe OS",
         sameAs: [contact.linkedin.url, contact.github.url],
         url: siteUrl,
         areaServed: "Global",
         serviceType: [
-          "AI product strategy",
-          "Agentic AI workflow design",
-          "AI Signal Lab diagnostics",
-          "Growth experimentation",
-          "Analytics instrumentation",
-          "Digital onboarding optimization",
-          "Fractional product leadership",
+          "AI systems consulting",
+          "Agentic workflow design",
+          "AI assistant build",
+          "Growth system audit",
+          "Automation and systems integrations",
+          "Product and MVP build",
         ],
         hasOfferCatalog: {
           "@type": "OfferCatalog",
           name: "AI product and growth consulting services",
           itemListElement: [
-            { "@type": "Offer", itemOffered: { "@type": "Service", name: "Product clarity sprint" } },
+            { "@type": "Offer", itemOffered: { "@type": "Service", name: "AI Workflow Sprint" } },
             { "@type": "Offer", itemOffered: { "@type": "Service", name: "Growth system audit" } },
-            { "@type": "Offer", itemOffered: { "@type": "Service", name: "AI workflow build" } },
+            { "@type": "Offer", itemOffered: { "@type": "Service", name: "AI Assistant Build" } },
+            { "@type": "Offer", itemOffered: { "@type": "Service", name: "Product / MVP Build" } },
           ],
         },
       },
       {
         "@type": "WebSite",
-        name: "Felipe Mejia",
+        name: "Felipe OS",
         url: siteUrl,
       },
     ],
@@ -106,6 +110,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <LayoutShell header={<SiteHeader />} footer={<SiteFooter />}>
           {children}
         </LayoutShell>
+        <CookieConsent />
       </body>
     </html>
   );

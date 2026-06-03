@@ -1,18 +1,15 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import type { Message } from "@/lib/conversation";
-
-const LINKEDIN_URL = "https://www.linkedin.com/in/felipemejiaosorio/";
-const GITHUB_URL = "https://github.com/afmo91";
-const EMAIL = "felipe.mejia@spotz.pro";
+import type { ChatAction, Message } from "@/lib/conversation";
 
 type Props = {
   messages: Message[];
   suggestions: string[];
   onSend: (text: string) => void;
+  onAction: (action: ChatAction) => void;
+  onReset: () => void;
   onToggleAudio: () => void;
   isLoading: boolean;
   audioEnabled: boolean;
@@ -44,7 +41,15 @@ function VolumeIcon({ muted }: { muted: boolean }) {
   );
 }
 
-function Bubble({ msg }: { msg: Message }) {
+function Bubble({
+  disabled,
+  msg,
+  onAction,
+}: {
+  disabled: boolean;
+  msg: Message;
+  onAction: (action: ChatAction) => void;
+}) {
   const isFelipe = msg.role === "felipe";
 
   return (
@@ -70,28 +75,19 @@ function Bubble({ msg }: { msg: Message }) {
       >
         <p className="m-0 whitespace-pre-wrap break-words text-[0.92rem] leading-6">{msg.text || "\u00a0"}</p>
 
-        {msg.action === "show_cv" ? (
-          <div className="mt-3 flex flex-wrap gap-3 border-t border-white/10 pt-3 text-sm">
-            <Link className="text-cyan-200 transition hover:text-white" href="/cv">
-              Open CV
-            </Link>
-            <a className="text-purple-200 transition hover:text-white" href={`mailto:${EMAIL}`}>
-              Email
-            </a>
-          </div>
-        ) : null}
-
-        {msg.action === "show_contact" ? (
-          <div className="mt-3 flex flex-wrap gap-3 border-t border-white/10 pt-3 text-sm">
-            <a className="text-cyan-200 transition hover:text-white" href={LINKEDIN_URL} rel="noopener noreferrer" target="_blank">
-              LinkedIn
-            </a>
-            <a className="text-purple-200 transition hover:text-white" href={`mailto:${EMAIL}`}>
-              Email
-            </a>
-            <a className="text-slate-300 transition hover:text-white" href={GITHUB_URL} rel="noopener noreferrer" target="_blank">
-              GitHub
-            </a>
+        {isFelipe && msg.actionButtons?.length ? (
+          <div className="mt-3 flex flex-wrap gap-2 border-t border-white/10 pt-3">
+            {msg.actionButtons.slice(0, 3).map((action) => (
+              <button
+                className="rounded-full border border-cyan-300/25 bg-cyan-300/10 px-3 py-1.5 text-left text-xs font-medium leading-5 text-cyan-50 transition hover:border-cyan-200/50 hover:bg-cyan-300/15 disabled:cursor-not-allowed disabled:opacity-50"
+                disabled={disabled}
+                key={`${msg.id}-${action.type}-${action.label}`}
+                onClick={() => onAction(action)}
+                type="button"
+              >
+                {action.label}
+              </button>
+            ))}
           </div>
         ) : null}
       </div>
@@ -121,7 +117,15 @@ function TypingIndicator() {
   );
 }
 
-function Thread({ messages, isLoading }: { messages: Message[]; isLoading: boolean }) {
+function Thread({
+  isLoading,
+  messages,
+  onAction,
+}: {
+  isLoading: boolean;
+  messages: Message[];
+  onAction: (action: ChatAction) => void;
+}) {
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -135,7 +139,7 @@ function Thread({ messages, isLoading }: { messages: Message[]; isLoading: boole
       `}</style>
       <div className="grid gap-3">
         {messages.map((message) => (
-          <Bubble key={message.id} msg={message} />
+          <Bubble disabled={isLoading} key={message.id} msg={message} onAction={onAction} />
         ))}
         <AnimatePresence>{isLoading ? <TypingIndicator key="typing" /> : null}</AnimatePresence>
       </div>
@@ -162,7 +166,7 @@ function Suggestions({
       initial={{ opacity: 0, y: 6 }}
       transition={{ damping: 28, stiffness: 300, type: "spring" }}
     >
-      {items.slice(0, 3).map((item) => (
+      {items.slice(0, 8).map((item) => (
         <button
           className="rounded-full border border-purple-300/25 bg-purple-400/10 px-3 py-1.5 text-left text-xs leading-5 text-slate-100/80 transition hover:border-cyan-300/40 hover:bg-cyan-300/10 disabled:cursor-not-allowed disabled:opacity-50"
           disabled={disabled}
@@ -255,9 +259,11 @@ function AudioControl({
 
 function PanelHeader({
   audioEnabled,
+  onReset,
   onToggleAudio,
 }: {
   audioEnabled: boolean;
+  onReset: () => void;
   onToggleAudio: () => void;
 }) {
   return (
@@ -265,11 +271,20 @@ function PanelHeader({
       <div className="flex min-w-0 items-center gap-3">
         <span className="h-8 w-8 flex-none rounded-full bg-[linear-gradient(135deg,#8b5cf6,#22d3ee)] shadow-[0_0_18px_rgba(139,92,246,0.28)]" />
         <div className="min-w-0">
-          <p className="truncate text-sm font-semibold text-white">Felipe Mejia</p>
-          <p className="truncate font-mono text-[0.64rem] uppercase text-cyan-200/60">Product · Growth · AI</p>
+          <p className="truncate text-sm font-semibold text-white">Felipe OS</p>
+          <p className="truncate font-mono text-[0.64rem] uppercase text-cyan-200/60">Product · Growth · AI systems</p>
         </div>
       </div>
-      <AudioControl audioEnabled={audioEnabled} onToggleAudio={onToggleAudio} />
+      <div className="flex items-center gap-2">
+        <button
+          className="rounded-full border border-white/10 bg-white/[0.045] px-3 py-1.5 text-xs font-medium text-slate-300/70 transition hover:text-white"
+          onClick={onReset}
+          type="button"
+        >
+          New conversation
+        </button>
+        <AudioControl audioEnabled={audioEnabled} onToggleAudio={onToggleAudio} />
+      </div>
     </div>
   );
 }
@@ -294,7 +309,7 @@ function MobilePanel(props: Props) {
   return (
     <motion.div
       animate={{ height: expanded ? "80vh" : "40vh", y: 0 }}
-      className="fixed inset-x-0 bottom-0 z-[60] flex flex-col rounded-t-[20px] border border-b-0 border-white/10 bg-[linear-gradient(160deg,rgba(13,12,26,0.95),rgba(5,13,18,0.92))] shadow-[0_-18px_50px_rgba(0,0,0,0.5)] backdrop-blur-2xl"
+      className="fixed inset-x-0 bottom-0 z-[60] flex flex-col rounded-t-[20px] border border-b-0 border-white/10 bg-[linear-gradient(160deg,rgba(13,12,26,0.95),rgba(5,13,18,0.92))] pb-[env(safe-area-inset-bottom)] shadow-[0_-18px_50px_rgba(0,0,0,0.5)] backdrop-blur-2xl"
       initial={{ y: "100%" }}
       transition={{ damping: 30, stiffness: 280, type: "spring" }}
     >
@@ -309,8 +324,8 @@ function MobilePanel(props: Props) {
         <span className="h-1 w-11 rounded-full bg-white/[0.22]" />
       </button>
 
-      <PanelHeader audioEnabled={props.audioEnabled} onToggleAudio={props.onToggleAudio} />
-      <Thread isLoading={props.isLoading} messages={props.messages} />
+      <PanelHeader audioEnabled={props.audioEnabled} onReset={props.onReset} onToggleAudio={props.onToggleAudio} />
+      <Thread isLoading={props.isLoading} messages={props.messages} onAction={props.onAction} />
       <Suggestions disabled={props.isLoading} items={props.suggestions} onSelect={props.onSend} />
       <InputRow disabled={props.isLoading} onSend={props.onSend} />
     </motion.div>
@@ -325,8 +340,8 @@ function DesktopPanel(props: Props) {
       initial={{ opacity: 0, x: -28 }}
       transition={{ damping: 30, stiffness: 260, type: "spring" }}
     >
-      <PanelHeader audioEnabled={props.audioEnabled} onToggleAudio={props.onToggleAudio} />
-      <Thread isLoading={props.isLoading} messages={props.messages} />
+      <PanelHeader audioEnabled={props.audioEnabled} onReset={props.onReset} onToggleAudio={props.onToggleAudio} />
+      <Thread isLoading={props.isLoading} messages={props.messages} onAction={props.onAction} />
       <Suggestions disabled={props.isLoading} items={props.suggestions} onSelect={props.onSend} />
       <InputRow disabled={props.isLoading} onSend={props.onSend} />
     </motion.div>

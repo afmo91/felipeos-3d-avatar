@@ -4,14 +4,14 @@ import { Html, useGLTF } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Suspense, useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
-import type { ConvTopic } from "@/lib/conversation";
+import type { VisualTopic } from "@/lib/conversation";
 
 // ── Types ─────────────────────────────────────────────────────────
 export type BustState = "assembling" | "idle" | "listening" | "thinking" | "speaking";
 
 type SceneProps = {
   bustState: BustState;
-  topic: ConvTopic;
+  topic: VisualTopic;
   amplitudeRef: React.RefObject<number>;
   onAssembled: () => void;
 };
@@ -131,7 +131,7 @@ function ThinkingRing({ active }: { active: boolean }) {
 }
 
 // ── Ambient background shapes ──────────────────────────────────────
-function AmbientShapes({ topic }: { topic: ConvTopic }) {
+function AmbientShapes({ topic }: { topic: VisualTopic }) {
   const icoRef = useRef<THREE.Mesh>(null);
   const torRef = useRef<THREE.Mesh>(null);
   const octRef = useRef<THREE.Mesh>(null);
@@ -365,7 +365,7 @@ function ExperienceShapes() {
   );
 }
 
-function TopicShapes({ topic }: { topic: ConvTopic }) {
+function TopicShapes({ topic }: { topic: VisualTopic }) {
   if (topic === "results")    return <ResultsShapes />;
   if (topic === "ai")         return <NeuralShapes />;
   if (topic === "growth")     return <GrowthShapes />;
