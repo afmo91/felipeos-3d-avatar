@@ -18,9 +18,15 @@ export type CVContact = {
 export type CVExperience = {
   company: string;
   role: string;
+  period?: string;
   caseStudyHref: string;
   metrics: string[];
   bullets: string[];
+};
+
+export type CVEducation = {
+  degree: string;
+  school: string;
 };
 
 export type BaseCV = {
@@ -31,6 +37,9 @@ export type BaseCV = {
   experience: CVExperience[];
   selectedAchievements?: string[];
   skills: Record<string, string[]>;
+  // Flat competences list used by the document-style CV (web + PDF). Falls back to flattened skills.
+  competences?: string[];
+  education?: CVEducation[];
   tools?: string[];
   languages?: string[];
 };

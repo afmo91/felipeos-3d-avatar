@@ -1,23 +1,48 @@
 import SignalRoot from "@/components/SignalRoot";
+import HomeNav from "@/components/HomeNav";
+import HomeMarketing from "@/components/sections/HomeMarketing";
+import MobileBookBar from "@/components/MobileBookBar";
+import SiteFooter from "@/components/SiteFooter";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Felipe OS | Product, Growth & AI Systems",
-  description: "AI-powered systems, automation, growth infrastructure and product builds by Felipe Mejia.",
+  title: "Felipe OS | AI Automation for Small Teams",
+  description:
+    "Fixed-scope AI systems that take repetitive work — support, lead follow-up, admin, reporting — off small teams. Working prototypes in weeks, not months.",
   keywords: [
-    "AI product consultant",
-    "growth product manager",
-    "agentic workflows",
+    "AI automation for small business",
     "AI workflow automation",
-    "AI assistants",
+    "AI assistant for SMB",
+    "custom AI assistant",
+    "customer support AI agent",
+    "B2B prospecting agent",
+    "RAG knowledge base",
+    "retrieval augmented generation",
+    "fine-tuning",
+    "AI agent orchestration",
+    "multi-agent systems",
+    "OpenCLAW agent runtime",
+    "MCP Model Context Protocol",
+    "vector database embeddings",
+    "API integrations",
+    "business process automation",
+    "agentic workflows",
+    "AI consultant for agencies",
+    "growth system audit",
+    "MVP build",
     "Felipe OS",
-    "product analytics consultant",
-    "0 to 1 product builder",
-    "SaaS growth strategy",
     "Felipe Mejia",
   ],
 };
 
 export default function HomePage() {
-  return <SignalRoot />;
+  return (
+    <>
+      <HomeNav />
+      <SignalRoot />
+      <HomeMarketing />
+      <SiteFooter />
+      <MobileBookBar />
+    </>
+  );
 }

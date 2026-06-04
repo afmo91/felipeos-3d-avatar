@@ -1,4 +1,4 @@
-const EMAIL = "felipe.mejia@spotz.pro";
+const EMAIL = "me@felipeos.com";
 const FALLBACK_SUBJECT = "Felipe OS discovery call";
 let warnedAboutBookingUrl = false;
 

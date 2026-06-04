@@ -309,7 +309,7 @@ function MobilePanel(props: Props) {
   return (
     <motion.div
       animate={{ height: expanded ? "80vh" : "40vh", y: 0 }}
-      className="fixed inset-x-0 bottom-0 z-[60] flex flex-col rounded-t-[20px] border border-b-0 border-white/10 bg-[linear-gradient(160deg,rgba(13,12,26,0.95),rgba(5,13,18,0.92))] pb-[env(safe-area-inset-bottom)] shadow-[0_-18px_50px_rgba(0,0,0,0.5)] backdrop-blur-2xl"
+      className="absolute inset-x-0 bottom-0 z-[60] flex flex-col rounded-t-[20px] border border-b-0 border-white/10 bg-[linear-gradient(160deg,rgba(13,12,26,0.95),rgba(5,13,18,0.92))] pb-[env(safe-area-inset-bottom)] shadow-[0_-18px_50px_rgba(0,0,0,0.5)] backdrop-blur-2xl"
       initial={{ y: "100%" }}
       transition={{ damping: 30, stiffness: 280, type: "spring" }}
     >
@@ -336,7 +336,7 @@ function DesktopPanel(props: Props) {
   return (
     <motion.div
       animate={{ opacity: 1, x: 0 }}
-      className="fixed bottom-0 left-0 top-14 z-[60] flex w-[clamp(21rem,38vw,34rem)] flex-col rounded-r-[20px] border border-l-0 border-white/10 bg-[linear-gradient(160deg,rgba(13,12,26,0.92),rgba(5,13,18,0.88))] shadow-[18px_0_55px_rgba(0,0,0,0.38)] backdrop-blur-2xl"
+      className="absolute bottom-0 left-0 top-0 z-[60] flex w-[clamp(21rem,38vw,34rem)] flex-col rounded-r-[20px] border border-l-0 border-white/10 bg-[linear-gradient(160deg,rgba(13,12,26,0.92),rgba(5,13,18,0.88))] shadow-[18px_0_55px_rgba(0,0,0,0.38)] backdrop-blur-2xl"
       initial={{ opacity: 0, x: -28 }}
       transition={{ damping: 30, stiffness: 260, type: "spring" }}
     >

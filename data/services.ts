@@ -11,6 +11,8 @@ export type ServiceOffer = {
   bestFor: string;
   deliverables: string[];
   timeline: string;
+  // Mid-market, value-based ranges (not lowest). Exact price scoped on a call.
+  priceRange: string;
   cta: string;
 };
 
@@ -18,18 +20,19 @@ export const services: ServiceOffer[] = [
   {
     id: "ai-workflow-sprint",
     title: "AI Workflow Sprint",
-    oneLiner: "Map one high-value workflow, design the agentic process and ship a working prototype.",
-    bestFor: "Teams with repetitive research, support, admin, CRM or reporting tasks.",
-    deliverables: ["workflow audit", "agent map", "prototype", "integration plan"],
+    oneLiner: "Pick one time-draining workflow and walk away with a working AI prototype that does it for you.",
+    bestFor: "Small teams drowning in repetitive research, support, admin, CRM or reporting work.",
+    deliverables: ["workflow audit", "agent map", "working prototype", "integration plan"],
     timeline: "1–2 weeks",
+    priceRange: "€1,500–€4,000",
     cta: "Start a workflow sprint",
   },
   {
     id: "ai-assistant-build",
     title: "AI Assistant Build",
     oneLiner:
-      "Design and build a custom assistant for support, sales, internal knowledge or document workflows.",
-    bestFor: "Teams that want AI embedded in real operations, not just a chatbot demo.",
+      "A custom AI assistant for support, sales or internal knowledge — embedded in the tools your team already uses.",
+    bestFor: "Businesses that want AI doing real work in their operations, not just a chatbot demo.",
     deliverables: [
       "assistant scope",
       "prompt/workflow design",
@@ -37,14 +40,15 @@ export const services: ServiceOffer[] = [
       "human handoff logic",
     ],
     timeline: "2–4 weeks",
+    priceRange: "€4,000–€12,000",
     cta: "Build an assistant",
   },
   {
     id: "growth-system-audit",
     title: "Growth System Audit",
     oneLiner:
-      "Review acquisition, tracking, funnel performance and attribution to find waste and quick wins.",
-    bestFor: "Teams spending on paid acquisition without clear visibility.",
+      "Find where your ad spend and funnel leak money — and the fastest experiments to fix it.",
+    bestFor: "Teams spending on paid acquisition without clear visibility into what works.",
     deliverables: [
       "tracking review",
       "CAC/ROAS analysis",
@@ -52,16 +56,18 @@ export const services: ServiceOffer[] = [
       "dashboard recommendations",
     ],
     timeline: "5–10 working days",
+    priceRange: "€1,500–€5,000",
     cta: "Request a growth audit",
   },
   {
     id: "product-mvp-build",
     title: "Product / MVP Build",
     oneLiner:
-      "Turn a business process or product idea into a usable web app, dashboard or internal tool.",
-    bestFor: "Founders, operators and teams that need a fast, practical product build.",
+      "Turn a manual process or product idea into a usable web app, dashboard or internal tool.",
+    bestFor: "Founders and operators who need a fast, practical build — not a six-month project.",
     deliverables: ["product scope", "UX flow", "MVP build", "deployment plan"],
     timeline: "3–6 weeks",
+    priceRange: "€6,000–€20,000",
     cta: "Discuss a product build",
   },
 ];

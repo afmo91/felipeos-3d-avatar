@@ -1,12 +1,11 @@
 "use client";
 
-import Link from "next/link";
 import { caseStudies, getCaseStudy } from "@/data/caseStudies";
 import { getService, services } from "@/data/services";
 import type { ChatAction, StageState } from "@/lib/conversation";
 import publicCV from "@/data/cv/base.json";
 
-const EMAIL = "felipe.mejia@spotz.pro";
+const EMAIL = "me@felipeos.com";
 const LINKEDIN = "https://www.linkedin.com/in/felipemejiaosorio/";
 const GITHUB = "https://github.com/afmo91";
 
@@ -53,9 +52,6 @@ function FooterLinks() {
       <a className="transition hover:text-white" href={GITHUB} rel="noopener noreferrer" target="_blank">
         GitHub
       </a>
-      <Link className="transition hover:text-white" href="/admin">
-        Admin
-      </Link>
       <button
         className="transition hover:text-white"
         onClick={() => window.dispatchEvent(new Event("open-cookie-preferences"))}
@@ -73,10 +69,10 @@ function IntroStage() {
       <div className="max-w-xl">
         <p className="font-mono text-xs uppercase tracking-[0.18em] text-cyan-100/60">Felipe OS guide</p>
         <h1 className="mt-3 text-2xl font-semibold text-white md:text-4xl">
-          Ask for an AI system. See the plan take shape.
+          Tell me what&apos;s eating your team&apos;s week.
         </h1>
         <p className="mx-auto mt-3 max-w-lg text-sm leading-6 text-slate-300/75 md:text-base">
-          Services, proof, recruiting context and personalized AI system plans — all through one guided conversation.
+          Describe a repetitive workflow and I&apos;ll turn it into a scoped AI build — services, proof and pricing, all in one conversation.
         </p>
       </div>
     </div>
@@ -122,6 +118,7 @@ function ServicesStage({ onAction, stage }: Props) {
                 </span>
               </div>
               <p className="mt-2 text-sm leading-6 text-slate-300/75">{service.oneLiner}</p>
+              <p className="mt-2 text-xs font-semibold text-cyan-100">{service.priceFrom}</p>
             </button>
           );
         })}
@@ -129,7 +126,10 @@ function ServicesStage({ onAction, stage }: Props) {
 
       <div className="mt-4 rounded-lg border border-white/10 bg-black/25 p-4">
         <p className="font-mono text-xs uppercase tracking-[0.16em] text-cyan-100/55">Selected offer</p>
-        <h3 className="mt-2 text-xl font-semibold text-white">{selected.title}</h3>
+        <div className="mt-2 flex flex-wrap items-baseline justify-between gap-2">
+          <h3 className="text-xl font-semibold text-white">{selected.title}</h3>
+          <span className="text-sm font-semibold text-cyan-100">{selected.priceFrom} · {selected.timeline}</span>
+        </div>
         <p className="mt-2 text-sm leading-6 text-slate-300">{selected.bestFor}</p>
         <div className="mt-4 flex flex-wrap gap-2">
           {selected.deliverables.map((deliverable) => (
@@ -169,8 +169,8 @@ function ProofStage({ onAction, stage }: Props) {
     <StageScroll>
       <StageHeader
         kicker="Proof of work"
-        title="Representative systems, safe data"
-        copy="No private screenshots or client data: just the problem, system, value and capabilities."
+        title="Real systems, real outcomes"
+        copy="Anonymized to protect clients — but the problem, system and result are real."
       />
 
       <div className="grid gap-3 xl:grid-cols-[0.9fr_1.1fr]">
@@ -200,12 +200,13 @@ function ProofStage({ onAction, stage }: Props) {
         </div>
 
         <div className="rounded-lg border border-white/10 bg-black/25 p-4">
-          <p className="font-mono text-xs uppercase tracking-[0.16em] text-cyan-100/55">Selected mockup</p>
+          <p className="font-mono text-xs uppercase tracking-[0.16em] text-cyan-100/55">{selected.client}</p>
           <h3 className="mt-2 text-xl font-semibold text-white">{selected.title}</h3>
           <div className="mt-4 grid gap-3">
             {[
               ["Problem", selected.problem],
               ["System built", selected.systemBuilt],
+              ["Result", selected.result],
               ["Commercial value", selected.commercialValue],
             ].map(([label, copy]) => (
               <div className="rounded-lg border border-white/10 bg-white/[0.035] p-3" key={label}>

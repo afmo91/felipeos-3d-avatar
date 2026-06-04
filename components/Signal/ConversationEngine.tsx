@@ -29,7 +29,6 @@ import {
   timelineOptions,
   toolOptions,
   type BuilderDraft,
-  type PlanCategory,
 } from "@/data/solutionPlans";
 import { getBookingHref, hasBookingUrl } from "@/lib/booking";
 import type { BustState } from "./BustScene";
@@ -374,8 +373,12 @@ export function useConversation(): ConvHook {
   }, []);
 
   useEffect(() => {
+    // One-time hydration from localStorage. This must run in an effect (not a
+    // lazy useState initializer) to keep SSR and the first client render in sync
+    // and avoid a hydration mismatch.
     const saved = readPersisted();
     if (saved) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setMessages(saved.messages);
       setSuggestions(saved.suggestions ?? []);
       setStage({
@@ -940,6 +943,8 @@ export function useConversation(): ConvHook {
         if (hasBookingUrl()) {
           window.open(href, "_blank", "noopener,noreferrer");
         } else {
+          // href is an external booking URL or a mailto: link, not an internal route.
+          // eslint-disable-next-line @next/next/no-location-assign-relative-destination
           window.location.href = href;
         }
         return;
@@ -947,7 +952,9 @@ export function useConversation(): ConvHook {
 
       if (action.type === "email") {
         updateStage({ activeTopic: "contact" });
-        window.location.href = "mailto:felipe.mejia@spotz.pro?subject=Felipe%20OS%20project";
+        // mailto: link, not an internal route.
+        // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+        window.location.href = "mailto:me@felipeos.com?subject=Felipe%20OS%20project";
         return;
       }
 

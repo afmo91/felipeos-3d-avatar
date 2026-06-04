@@ -1,4 +1,3 @@
-import Link from "next/link";
 import CookiePreferencesButton from "@/components/CookiePreferencesButton";
 import { getBaseCV } from "@/lib/cv";
 
@@ -39,9 +38,6 @@ export default function SiteFooter() {
               {link.text}
             </a>
           ))}
-          <Link className="footer-link" href="/admin">
-            Admin
-          </Link>
           <CookiePreferencesButton />
         </nav>
       </div>

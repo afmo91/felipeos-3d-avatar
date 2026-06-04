@@ -1,11 +1,11 @@
 {
   "name": "Felipe Mejia",
-  "title": "Product & Growth Leader | AI Systems Builder",
+  "title": "Product Builder · AI Systems",
   "summary": [
-    "Product & Growth leader with 12+ years of experience across telecom, e-commerce and B2B SaaS. I build AI-powered systems, growth engines, dashboards and automation workflows that help teams ship faster, measure better and scale."
+    "Product Builder with 12+ years of experience designing digital platforms, growth systems and SaaS products. Founder of spotz.pro, an AI platform built from 0 to 1. I build agent systems that orchestrate complete workflows — APIs, multi-step reasoning and automation. A hybrid product, business and technical profile, focused on impact: -30% CAC and +25% conversion for a telecom operator with 500K+ customers."
   ],
   "contact": {
-    "email": "felipe.mejia@spotz.pro",
+    "email": "me@felipeos.com",
     "linkedin": {
       "label": "Felipe Mejia LinkedIn",
       "url": "https://www.linkedin.com/in/felipemejiaosorio/"
@@ -15,54 +15,71 @@
       "url": "https://github.com/afmo91"
     }
   },
+  "competences": [
+    "AI Agents & LLM",
+    "Workflow Automation & Orchestration",
+    "Product Discovery",
+    "Roadmapping",
+    "API-driven Systems",
+    "System Orchestration",
+    "A/B Testing",
+    "Product Development",
+    "KPI Frameworks",
+    "SaaS (0→1)"
+  ],
   "experience": [
     {
-      "company": "Spotz.pro",
-      "role": "Founder / Product Builder",
-      "caseStudyHref": "/#proof-of-work",
-      "metrics": ["AI SaaS platform", "6 paid media channels", "0→1 product build"],
+      "company": "spotz.pro",
+      "role": "Founder & Product Builder (AI)",
+      "period": "2024 — Present",
+      "caseStudyHref": "/#proof",
+      "metrics": ["AI SaaS platform", "0→1 product build", "multi-platform ads"],
       "bullets": [
-        "Built an AI-powered SaaS platform for managing and optimizing paid media workflows across Google, Meta, LinkedIn, TikTok, X and Pinterest.",
-        "Designed dashboards, API integrations, lifecycle metrics and AI recommendation workflows.",
-        "Tested freemium and usage-based pricing models.",
-        "Led product discovery, specs, implementation, QA and release management."
+        "Designed and built an AI SaaS platform (0→1) for managing multi-platform ad campaigns (Google, Meta, TikTok…).",
+        "Built agent systems that automate complete workflows — analysis, decision and execution via APIs.",
+        "Defined the product vision, ran user discovery and prioritized the roadmap.",
+        "Designed and implemented a unified dashboard for analytics, steering and real-time optimization.",
+        "Built end-to-end: specs, frontend, API integrations and QA.",
+        "Set up a monetization strategy."
       ]
     },
     {
       "company": "Adamo Telecom",
-      "role": "Growth Product Manager / Digital Acquisition",
-      "caseStudyHref": "/#proof-of-work",
-      "metrics": ["500K+ customers", "€3M+ annual media budget", "+25% conversion", "-30% CAC", "same-day activation"],
+      "role": "Growth Product Manager",
+      "period": "2019 — 2024",
+      "caseStudyHref": "/#proof",
+      "metrics": ["500K+ customers", "€3M+ media budget", "+25% conversion", "-30% CAC"],
       "bullets": [
-        "Led digital acquisition and growth product initiatives for a telecom operator with 500K+ customers.",
-        "Managed €3M+ annual performance marketing budget across Google Ads, Meta Ads and programmatic.",
-        "Improved conversion by 25% and reduced CAC by 30% through experimentation.",
-        "Reduced onboarding time from 5 days to same-day activation.",
-        "Reduced first-month churn by 15% through onboarding improvements.",
-        "Recovered €200K+ in wasted spend with attribution and performance monitoring."
+        "Owned growth product and acquisition-funnel optimization for a telecom operator with 500K+ customers.",
+        "Managed a €3M+ annual performance-marketing budget across Google Ads, Meta Ads and programmatic.",
+        "Redesigned the onboarding funnel with product & engineering → -15% churn.",
+        "Built an attribution framework → -30% CAC, recovering €200K+ in wasted spend.",
+        "Created the experimentation (A/B testing) program → +25% conversion.",
+        "Deployed data dashboards used by top management."
       ]
     },
     {
       "company": "Segmentta",
-      "role": "Co-founder / Product & Growth Consultant",
+      "role": "Co-founder",
+      "period": "2013 — 2019",
       "caseStudyHref": "/#experience",
-      "metrics": ["30+ institutional clients", "€500K+ annual revenue", "team of 10"],
+      "metrics": ["30+ B2B clients", "team of 10", "successful exit"],
       "bullets": [
-        "Co-founded and scaled a B2B consulting business serving institutional clients in regulated markets.",
-        "Worked with 30+ institutional clients including healthcare and enterprise companies.",
+        "Founded and grew a B2B marketing agency serving 30+ institutional clients in regulated (pharma) markets.",
+        "Developed go-to-market strategies in regulated environments.",
         "Built and managed a team of 10 across commercial, logistics and marketing operations.",
-        "Grew annual revenue to €500K+ before exiting through sale of ownership stake."
+        "Grew the business to a successful exit through sale of the ownership stake."
       ]
+    }
+  ],
+  "education": [
+    {
+      "degree": "MSc International Business",
+      "school": "IÉSEG School of Management"
     },
     {
-      "company": "Consulting / AI Systems",
-      "role": "Product, Growth & Automation",
-      "caseStudyHref": "/#services",
-      "metrics": ["AI assistants", "agentic workflows", "automation systems", "growth infrastructure"],
-      "bullets": [
-        "Design and build AI assistants, agentic workflows, API integrations, automation systems and growth infrastructure.",
-        "Work across B2B lead generation, support automation, CMS/CRM systems, WhatsApp lead capture, AI admin assistants and performance marketing systems."
-      ]
+      "degree": "BBA",
+      "school": "CESA (Colombia)"
     }
   ],
   "selectedAchievements": [
@@ -71,13 +88,13 @@
     "Improved conversion by 25% and reduced CAC by 30% through experimentation.",
     "Reduced onboarding time from 5 days to same-day activation.",
     "Recovered €200K+ in wasted spend with attribution and performance monitoring.",
-    "Co-founded and scaled a B2B consulting business to €500K+ annual revenue before exit."
+    "Co-founded and scaled a B2B consulting business before exit."
   ],
   "skills": {
     "Product": ["discovery", "prioritization", "roadmapping", "AI product strategy", "0→1 product building"],
     "Growth": ["paid acquisition", "funnel optimization", "experimentation", "pricing", "CAC/ROAS", "attribution"],
-    "AI/Automation": ["AI assistants", "agentic workflows", "process automation", "API integrations", "document workflows"],
-    "Analytics": ["dashboards", "lifecycle metrics", "observability", "CRM and campaign reporting"],
+    "AI/Automation": ["AI agents & LLM", "agentic workflows", "process automation", "API integrations", "orchestration"],
+    "Analytics": ["dashboards", "lifecycle metrics", "KPI frameworks", "CRM and campaign reporting"],
     "Leadership": ["stakeholder management", "cross-functional execution", "C-level communication"]
   },
   "tools": [
@@ -98,5 +115,5 @@
     "Next.js",
     "Vercel"
   ],
-  "languages": ["Spanish native", "French fluent", "English fluent"]
+  "languages": ["Spanish (native)", "French (fluent)", "English (fluent)"]
 }

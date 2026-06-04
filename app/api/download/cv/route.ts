@@ -5,155 +5,210 @@ import { readActivePublicCV } from "@/lib/supabase/browser";
 
 export const runtime = "nodejs";
 
+// Palette taken from the reference CV.
+const TEAL = "#1a5c71"; // name + strong headings
+const BLUE = "#357da2"; // section labels + role titles
+const INK = "#323232"; // body text
+const MUTE = "#606060"; // secondary text
+
 const styles = StyleSheet.create({
   page: {
     backgroundColor: "#ffffff",
-    color: "#111827",
+    color: INK,
     fontFamily: "Helvetica",
     fontSize: 9.2,
-    lineHeight: 1.34,
-    paddingBottom: 28,
-    paddingHorizontal: 34,
-    paddingTop: 30,
+    lineHeight: 1.4,
+    paddingHorizontal: 36,
+    paddingVertical: 34,
   },
   header: {
-    borderBottomColor: "#d1d5db",
-    borderBottomWidth: 1,
-    marginBottom: 10,
+    borderBottomColor: TEAL,
+    borderBottomWidth: 1.5,
+    flexDirection: "row",
+    flexWrap: "wrap",
+    alignItems: "baseline",
     paddingBottom: 8,
+    marginBottom: 14,
   },
   name: {
-    fontSize: 20,
-    fontWeight: 700,
-  },
-  title: {
-    color: "#374151",
-    fontSize: 10.5,
-    marginTop: 3,
-  },
-  contact: {
-    color: "#4b5563",
-    fontSize: 8.6,
-    marginTop: 5,
-  },
-  section: {
-    marginTop: 8,
-  },
-  sectionTitle: {
-    color: "#111827",
-    fontSize: 9.4,
-    fontWeight: 700,
-    letterSpacing: 0.8,
-    marginBottom: 4,
+    color: TEAL,
+    fontFamily: "Helvetica-Bold",
+    fontSize: 21,
+    letterSpacing: 0.5,
     textTransform: "uppercase",
   },
-  summary: {
-    color: "#1f2937",
+  title: {
+    color: BLUE,
+    fontSize: 12,
+    letterSpacing: 0.5,
+    textTransform: "uppercase",
   },
-  roleHeader: {
-    display: "flex",
+  body: {
     flexDirection: "row",
-    justifyContent: "space-between",
+  },
+  left: {
+    width: "33%",
+    paddingRight: 16,
+  },
+  right: {
+    width: "67%",
+  },
+  sectionTitle: {
+    color: BLUE,
+    fontFamily: "Helvetica-Bold",
+    fontSize: 9.6,
+    letterSpacing: 1,
+    textTransform: "uppercase",
+    marginBottom: 5,
+  },
+  block: {
+    marginBottom: 14,
+  },
+  contactLine: {
+    color: INK,
     marginBottom: 2,
   },
-  company: {
+  bulletRow: {
+    flexDirection: "row",
+    marginBottom: 2.5,
+  },
+  bulletDot: {
+    color: BLUE,
+    width: 8,
+  },
+  bulletText: {
+    flex: 1,
+    color: INK,
+  },
+  compItem: {
+    color: INK,
+    marginBottom: 3,
+  },
+  summary: {
+    color: INK,
+    lineHeight: 1.45,
+  },
+  job: {
+    marginBottom: 11,
+  },
+  jobTitle: {
+    color: BLUE,
+    fontFamily: "Helvetica-Bold",
     fontSize: 10,
-    fontWeight: 700,
+    marginBottom: 1,
   },
-  role: {
-    color: "#374151",
-    fontSize: 9,
+  jobPeriod: {
+    color: MUTE,
+    fontSize: 8.4,
+    marginBottom: 3,
   },
-  metrics: {
-    color: "#4b5563",
-    fontSize: 8.2,
-    marginBottom: 2,
+  eduDegree: {
+    color: INK,
+    fontFamily: "Helvetica-Bold",
   },
-  bullet: {
-    marginBottom: 1.5,
-    paddingLeft: 8,
-  },
-  compactLine: {
-    color: "#1f2937",
-    marginBottom: 2,
+  eduSchool: {
+    color: MUTE,
+    marginBottom: 6,
   },
 });
 
+const h = React.createElement;
+
 function Section({ children, title }: { children?: React.ReactNode; title: string }) {
-  return React.createElement(
-    View,
-    { style: styles.section },
-    React.createElement(Text, { style: styles.sectionTitle }, title),
-    children,
-  );
+  return h(View, { style: styles.block }, h(Text, { style: styles.sectionTitle }, title), children);
 }
 
 function Bullet({ children }: { children?: string }) {
-  return React.createElement(Text, { style: styles.bullet }, `• ${children}`);
+  return h(
+    View,
+    { style: styles.bulletRow },
+    h(Text, { style: styles.bulletDot }, "•"),
+    h(Text, { style: styles.bulletText }, children),
+  );
 }
 
 function CVDocument({ cv }: { cv: BaseCV }) {
-  return React.createElement(
+  const competences = cv.competences ?? Object.values(cv.skills).flat();
+  const education = cv.education ?? [];
+
+  return h(
     Document,
-    { author: cv.name, subject: cv.title, title: "Felipe Mejia CV" },
-    React.createElement(
+    { author: cv.name, subject: cv.title, title: `${cv.name} CV` },
+    h(
       Page,
       { size: "A4", style: styles.page },
-      React.createElement(
+      // Header
+      h(
         View,
         { style: styles.header },
-        React.createElement(Text, { style: styles.name }, cv.name),
-        React.createElement(Text, { style: styles.title }, cv.title),
-        React.createElement(
-          Text,
-          { style: styles.contact },
-          `${cv.contact.email} | ${cv.contact.linkedin.url} | ${cv.contact.github.url}`,
-        ),
+        h(Text, { style: styles.name }, `${cv.name}  `),
+        h(Text, { style: styles.title }, `| ${cv.title}`),
       ),
-      React.createElement(Section, { title: "Summary" }, React.createElement(Text, { style: styles.summary }, cv.summary.join(" "))),
-      React.createElement(
-        Section,
-        { title: "Experience" },
-        cv.experience.map((item) =>
-          React.createElement(
-            View,
-            { key: `${item.company}-${item.role}`, wrap: false },
-            React.createElement(
-              View,
-              { style: styles.roleHeader },
-              React.createElement(Text, { style: styles.company }, item.company),
-              React.createElement(Text, { style: styles.role }, item.role),
-            ),
-            React.createElement(Text, { style: styles.metrics }, item.metrics.join(" | ")),
-            item.bullets.slice(0, item.company === "Adamo Telecom" ? 6 : 4).map((bullet) =>
-              React.createElement(Bullet, { key: bullet }, bullet),
+      // Two columns
+      h(
+        View,
+        { style: styles.body },
+        // Left rail
+        h(
+          View,
+          { style: styles.left },
+          h(
+            Section,
+            { title: "Contact" },
+            h(Text, { style: styles.contactLine }, cv.contact.email),
+            h(Text, { style: styles.contactLine }, cv.contact.linkedin.url),
+            h(Text, { style: styles.contactLine }, cv.contact.github.url),
+          ),
+          h(
+            Section,
+            { title: "Skills" },
+            competences.map((item) => h(Text, { key: item, style: styles.compItem }, item)),
+          ),
+          education.length
+            ? h(
+                Section,
+                { title: "Education" },
+                education.map((ed) =>
+                  h(
+                    View,
+                    { key: `${ed.degree}-${ed.school}` },
+                    h(Text, { style: styles.eduDegree }, ed.degree),
+                    h(Text, { style: styles.eduSchool }, ed.school),
+                  ),
+                ),
+              )
+            : null,
+          cv.languages?.length
+            ? h(
+                Section,
+                { title: "Languages" },
+                cv.languages.map((lang) => h(Text, { key: lang, style: styles.compItem }, lang)),
+              )
+            : null,
+        ),
+        // Right column
+        h(
+          View,
+          { style: styles.right },
+          h(
+            Section,
+            { title: "Profile" },
+            h(Text, { style: styles.summary }, cv.summary.join(" ")),
+          ),
+          h(
+            Section,
+            { title: "Experience" },
+            cv.experience.map((item) =>
+              h(
+                View,
+                { key: `${item.company}-${item.role}`, style: styles.job, wrap: false },
+                h(Text, { style: styles.jobTitle }, `${item.company} — ${item.role}`),
+                item.period ? h(Text, { style: styles.jobPeriod }, item.period) : null,
+                item.bullets.map((bullet) => h(Bullet, { key: bullet }, bullet)),
+              ),
             ),
           ),
         ),
-      ),
-      React.createElement(
-        Section,
-        { title: "Selected Achievements" },
-        (cv.selectedAchievements ?? []).slice(0, 6).map((achievement) =>
-          React.createElement(Bullet, { key: achievement }, achievement),
-        ),
-      ),
-      React.createElement(
-        Section,
-        { title: "Skills" },
-        Object.entries(cv.skills).map(([group, values]) =>
-          React.createElement(
-            Text,
-            { key: group, style: styles.compactLine },
-            `${group}: ${values.join(", ")}`,
-          ),
-        ),
-      ),
-      React.createElement(
-        Section,
-        { title: "Tools & Languages" },
-        React.createElement(Text, { style: styles.compactLine }, `Tools: ${(cv.tools ?? []).join(", ")}`),
-        React.createElement(Text, { style: styles.compactLine }, `Languages: ${(cv.languages ?? []).join(", ")}`),
       ),
     ),
   );

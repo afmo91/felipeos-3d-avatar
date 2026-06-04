@@ -1,116 +1,101 @@
 export type CaseStudyId =
+  | "growth-audit-experimentation-system"
   | "paid-media-operating-layer"
   | "b2b-lead-crm-automation"
-  | "ai-support-assistant"
-  | "ai-admin-document-assistant"
-  | "product-website-cms-conversion"
-  | "growth-audit-experimentation-system";
+  | "ai-support-assistant";
 
 export type CaseStudy = {
   id: CaseStudyId;
   title: string;
+  // Anonymized client descriptor, e.g. "B2B SaaS, ~40 staff". Keeps proof concrete without exposing data.
+  client: string;
   problem: string;
   systemBuilt: string;
+  // Concrete before -> after outcome.
+  result: string;
   commercialValue: string;
   capabilities: string[];
 };
 
 export const caseStudies: CaseStudy[] = [
   {
-    id: "paid-media-operating-layer",
-    title: "AI Paid Media Operating Layer",
+    id: "growth-audit-experimentation-system",
+    title: "AI-Assisted Acquisition Optimization",
+    client: "Telecom operator, Spain",
     problem:
-      "Paid teams work across disconnected platforms, inconsistent data and manual optimization routines.",
+      "High acquisition volume and complex paid-media spend, with pressure to cut wasted budget while improving digital sales performance.",
     systemBuilt:
-      "A unified operating layer with cross-channel dashboards, workflow actions, AI recommendations and lifecycle metrics.",
+      "A data-driven acquisition system combining cross-channel performance analysis, automated reporting, budget monitoring, conversion optimization and structured decision workflows.",
+    result:
+      "Managed €3M+ annual media budget · CAC down ~30% · conversion up ~25% · ~€200K recovered from inefficient spend · digital sales grew from 0% to ~30% of total.",
     commercialValue:
-      "Helps teams monitor performance, identify budget opportunities and reduce manual campaign work.",
+      "Less wasted ad spend and a measurable shift of revenue into digital channels.",
     capabilities: [
-      "Multi-channel API integrations",
-      "Paid media strategy",
+      "Paid media analysis",
+      "Automated reporting",
+      "Budget monitoring",
+      "Conversion optimization",
+      "Decision workflows",
+    ],
+  },
+  {
+    id: "paid-media-operating-layer",
+    title: "AI Recommendation System for Paid Ads",
+    client: "Paid-ads SaaS (0→1 product)",
+    problem:
+      "Ads managers spend hours in dashboards to spot performance issues, compare campaigns across platforms and decide what to do next.",
+    systemBuilt:
+      "An AI-powered SaaS built from zero: Google Ads + Meta Ads integrations, a cross-platform campaign dashboard, an AI recommendation layer, a campaign editor and scalable data storage (S3, Glue, Athena).",
+    result:
+      "Shipped from 0 to working product — Google + Meta data unified, cross-platform dashboard, AI recommendation layer and pricing tiers from free to enterprise.",
+    commercialValue:
+      "Marketers find optimization opportunities in minutes instead of hours across platforms.",
+    capabilities: [
+      "Google/Meta Ads integrations",
+      "Cross-platform dashboard",
       "AI recommendations",
-      "Dashboard design",
-      "Lifecycle instrumentation",
+      "Campaign editor",
+      "S3 / Glue / Athena storage",
     ],
   },
   {
     id: "b2b-lead-crm-automation",
-    title: "B2B Lead Generation & CRM Automation",
+    title: "AI-Powered Sales CRM Foundation",
+    client: "B2B industrial manufacturer",
     problem:
-      "B2B teams lose leads between websites, WhatsApp, spreadsheets, CRM and manual follow-up.",
+      "Sales activity was fragmented across website requests, WhatsApp conversations, manual follow-ups and offline commercial processes.",
     systemBuilt:
-      "A workflow connecting acquisition pages, qualification logic, CRM updates, follow-up sequences and pipeline tracking.",
-    commercialValue: "Reduces manual coordination and improves pipeline visibility.",
+      "A structured CRM for companies, contacts, activities, tasks and campaigns — connecting website leads and WhatsApp-first flows, with AI recommendation, lead-scoring, message-draft and approval-queue foundations.",
+    result:
+      "Website leads connected to CRM records, AI draft-approval queue in place, and the offer reorganized into 8 product lines, 3 industries and 6 solution categories — a scalable base for AI-assisted B2B prospecting.",
+    commercialValue:
+      "One scalable workspace for prospecting and follow-up instead of scattered tools.",
     capabilities: [
+      "CRM structure",
       "Lead capture",
-      "CRM automation",
-      "Outreach workflows",
-      "WhatsApp/email routing",
-      "Pipeline tracking",
+      "AI message drafts",
+      "Lead prioritization",
+      "Prospecting workspace",
     ],
   },
   {
     id: "ai-support-assistant",
-    title: "AI Support Assistant",
-    problem: "Support teams spend too much time on repetitive questions and manual classification.",
-    systemBuilt:
-      "An AI assistant concept that classifies requests, drafts answers, retrieves knowledge and escalates edge cases.",
-    commercialValue: "Reduces repetitive workload while keeping humans in control.",
-    capabilities: [
-      "Knowledge retrieval",
-      "Ticket classification",
-      "Drafted responses",
-      "Human handoff",
-      "Support analytics",
-    ],
-  },
-  {
-    id: "ai-admin-document-assistant",
-    title: "AI Admin & Document Assistant",
+    title: "AI Automation Roadmap for Customer Support",
+    client: "Consumer / retail brand",
     problem:
-      "Users struggle to know which document is needed, what information is missing and how to format requests.",
+      "Support volume spikes before peak season, creating repetitive manual work and slower response times.",
     systemBuilt:
-      "A guided assistant with checklists, profile context, document previews and generated drafts.",
-    commercialValue: "Turns confusing admin processes into structured workflows.",
-    capabilities: [
-      "AI chat assistant",
-      "Document generation",
-      "Checklist logic",
-      "User context",
-      "Web/mobile concept",
-    ],
-  },
-  {
-    id: "product-website-cms-conversion",
-    title: "Product Website + CMS + Conversion System",
-    problem:
-      "Many business websites fail to explain the offer, capture demand or route leads correctly.",
-    systemBuilt:
-      "A modern website with CMS structure, product/service taxonomy, conversion paths, tracking and lead capture.",
-    commercialValue: "Improves clarity, lead quality and content autonomy.",
-    capabilities: [
-      "Next.js websites",
-      "CMS/admin tools",
-      "Product taxonomy",
-      "Conversion UX",
-      "Tracking and analytics",
-    ],
-  },
-  {
-    id: "growth-audit-experimentation-system",
-    title: "Growth Audit & Experimentation System",
-    problem:
-      "Growth teams often spend without clear attribution, consistent tests or reliable funnel visibility.",
-    systemBuilt:
-      "A diagnostic framework for acquisition, landing pages, tracking, attribution and experiment prioritization.",
+      "A first-phase AI and automation roadmap: support-workflow mapping, repetitive-request classification, escalation rules, response templates, self-service flows and a clear automatable-vs-human boundary.",
+    result:
+      "Workflow mapped and repetitive categories identified, first-phase automation scoped before high season, and AI-assisted classification/response logic prepared — with support, sales and ops aligned.",
     commercialValue:
-      "Helps teams reduce wasted spend and identify high-leverage growth opportunities.",
+      "A clear, staged plan to absorb peak-season volume without adding headcount.",
     capabilities: [
-      "Paid ads audit",
-      "Attribution modeling",
-      "Funnel analytics",
-      "Experiment design",
-      "CAC/ROAS optimization",
+      "Workflow mapping",
+      "Request classification",
+      "Escalation rules",
+      "Response templates",
+      "Self-service flows",
     ],
   },
 ];

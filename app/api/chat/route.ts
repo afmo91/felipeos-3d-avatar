@@ -30,7 +30,7 @@ export async function POST(request: Request) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini",
+        model: process.env.OPENAI_MODEL || "gpt-4o-mini",
         messages: [
           { role: "system", content: FELIPE_SYSTEM_PROMPT },
           ...history,

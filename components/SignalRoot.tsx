@@ -1,74 +1,27 @@
 "use client";
 
 import ChatEngine from "@/components/Signal/ChatEngine";
-import { getBookingHref, getBookingTarget, hasBookingUrl } from "@/lib/booking";
-
-function TopBar() {
-  const bookingHref = getBookingHref();
-  const bookingTarget = getBookingTarget();
-
-  return (
-    <div
-      style={{
-        alignItems: "center",
-        backdropFilter: "blur(16px)",
-        background: "rgba(8,8,16,0.7)",
-        borderBottom: "1px solid rgba(255,255,255,0.06)",
-        display: "flex",
-        height: "3.5rem",
-        justifyContent: "space-between",
-        left: 0,
-        padding: "0 1.25rem",
-        position: "fixed",
-        right: 0,
-        top: 0,
-        zIndex: 80,
-      }}
-    >
-      <span style={{ color: "#fff", fontSize: "1rem", fontWeight: 800, letterSpacing: 0 }}>
-        Felipe OS
-      </span>
-      <a
-        href={bookingHref}
-        rel={hasBookingUrl() ? "noopener noreferrer" : undefined}
-        style={{
-          background: "rgba(34,211,238,0.1)",
-          border: "1px solid rgba(34,211,238,0.28)",
-          borderRadius: "999px",
-          color: "#f8fdff",
-          fontSize: "0.8125rem",
-          fontWeight: 700,
-          padding: "0.55rem 0.9rem",
-          textDecoration: "none",
-          whiteSpace: "nowrap",
-        }}
-        target={bookingTarget}
-      >
-        Book a 30-min call
-      </a>
-    </div>
-  );
-}
 
 export default function SignalRoot() {
   return (
     <div
+      id="top"
       style={{
         background:
           "radial-gradient(circle at 72% 22%, rgba(34,211,238,0.13), transparent 32%), radial-gradient(circle at 26% 72%, rgba(139,92,246,0.16), transparent 34%), linear-gradient(160deg, #080712 0%, #080810 42%, #050b10 100%)",
-        inset: 0,
+        // Fill the viewport below the sticky 3.5rem nav; the rest of the page scrolls beneath.
+        height: "calc(100dvh - 3.5rem)",
         overflow: "hidden",
-        position: "fixed",
-        zIndex: 100,
+        position: "relative",
+        width: "100%",
       }}
     >
-      <TopBar />
       <ChatEngine />
 
       <style>{`
         .signal-scene-area {
           position: absolute;
-          top: 3.5rem;
+          top: 0;
           left: 0;
           right: 0;
           bottom: 40vh;

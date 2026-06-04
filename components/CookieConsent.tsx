@@ -41,8 +41,12 @@ export default function CookieConsent() {
   const [marketing, setMarketing] = useState(false);
 
   useEffect(() => {
+    // One-time hydration from stored consent. Must run in an effect (not a lazy
+    // initializer) so SSR and the first client render match and we avoid a
+    // hydration mismatch.
     const saved = readConsent();
     if (saved) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setAnalytics(saved.analytics);
       setMarketing(saved.marketing);
     } else {

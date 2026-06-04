@@ -73,14 +73,13 @@ export type RouteResponse = {
 export const STORAGE_KEY = "felipe-os-chat-state-v1";
 
 export const INITIAL_ASSISTANT_TEXT =
-  "Hi, I'm Felipe. I build AI-powered systems for product, growth and operations. What would you like to explore?";
+  "Hi, I'm Felipe. I build AI systems that take repetitive work off small teams — support, follow-up, admin, reporting. What's eating your week?";
 
 export const INITIAL_CHIPS = [
-  "I need an AI system",
+  "Automate a workflow",
   "Show proof of work",
-  "I'm recruiting",
+  "What does it cost?",
   "Book a call",
-  "What can you build?",
 ];
 
 export const defaultStage: StageState = {
@@ -187,11 +186,24 @@ const actionSets = {
 };
 
 export function initialRoute(input: string): RouteResponse | null {
-  if (exact(input, ["I need an AI system"])) {
+  if (exact(input, ["Automate a workflow", "I need an AI system"])) {
     return {
       text:
-        "Good starting point. I usually begin by mapping the workflow, identifying where an agent can act, and shipping a small prototype in 1–2 weeks.",
+        "Good starting point. I map the workflow, find where an AI agent can take over, and ship a working prototype in 1–2 weeks — fixed scope, fixed price.",
       topic: "ai" as VisualTopic,
+      actions: actionSets.aiSystem,
+      stagePatch: {
+        activeTopic: "services",
+        selectedService: "ai-workflow-sprint",
+      },
+    };
+  }
+
+  if (exact(input, ["What does it cost?", "Pricing", "How much"])) {
+    return {
+      text:
+        "Scoped as fixed ranges: workflow sprints €1.5–4K, AI assistants €4–12K, support and prospecting agents from ~€3.5K. Value-based, not the cheapest — exact price on a 30-min call.",
+      topic: "contact" as VisualTopic,
       actions: actionSets.aiSystem,
       stagePatch: {
         activeTopic: "services",
@@ -356,9 +368,14 @@ Rules:
 { "reply": "...", "topic": "neutral|results|ai|growth|product|experience|contact" }
 
 Context:
-- Felipe builds AI-powered systems for product, growth and operations
-- Services: AI Workflow Sprint, AI Assistant Build, Growth System Audit, Product / MVP Build
-- Proof themes: AI paid media operating layer, B2B lead generation and CRM automation, AI support assistant, AI admin/document assistant, product website/CMS/conversion systems, growth audit and experimentation systems
+- Felipe builds AI systems that remove repetitive work for small businesses and agencies (support, lead follow-up, admin, reporting)
+- Engagements are fixed-scope, value-based (mid-market, not the cheapest), not open-ended retainers
+- Services (ranges): AI Workflow Sprint €1.5–4K (1–2 wks), AI Assistant Build €4–12K (2–4 wks), Growth System Audit €1.5–5K (5–10 days), Product / MVP Build €6–20K (3–6 wks)
+- Productized solutions: Custom AI Assistant, Customer Support (SAV) Agent, B2B Prospecting Agent, OpenCLAW agent runtime setup, RAG knowledge base, Workflow Automation
+- Technical capabilities: RAG, fine-tuning, agent orchestration, multi-agent systems, MCP, tool use, APIs & webhooks, vector databases/embeddings, evals/guardrails, self-hosted open-source LLMs (Llama, Mistral), Anthropic Claude, OpenAI; stack Next.js/Vercel, AWS, Supabase
+- Optional ongoing care & tuning plans from €500/mo
+- Exact scope and price are confirmed on a 30-min discovery call
+- Proof (real, anonymized): AI-assisted acquisition optimization for a Spanish telecom; AI recommendation SaaS for paid ads (Google + Meta); AI-powered sales CRM foundation for a B2B industrial manufacturer; AI automation roadmap for customer support
 - Experience: Spotz.pro AI paid media SaaS; Adamo Telecom growth product and digital acquisition; Segmentta B2B consulting
-- Results include +25% conversion, -30% CAC, same-day activation, €200K+ recovered waste and €3M+ annual media budget
-- Contact: felipe.mejia@spotz.pro, LinkedIn https://www.linkedin.com/in/felipemejiaosorio/, GitHub https://github.com/afmo91`;
+- Results include ~+25% conversion, ~-30% CAC, ~€200K recovered waste, €3M+ annual media budget, and digital sales grown from 0% to ~30% of total
+- Contact: me@felipeos.com, LinkedIn https://www.linkedin.com/in/felipemejiaosorio/, GitHub https://github.com/afmo91`;

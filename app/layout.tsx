@@ -5,6 +5,7 @@ import LayoutShell from "@/components/LayoutShell";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import CookieConsent from "@/components/CookieConsent";
+import Analytics from "@/components/Analytics";
 import { getBaseCV } from "@/lib/cv";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://3d.felipeos.com";
@@ -75,19 +76,28 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         areaServed: "Global",
         serviceType: [
           "AI systems consulting",
-          "Agentic workflow design",
-          "AI assistant build",
+          "Custom AI assistant development",
+          "Customer support AI agent",
+          "B2B prospecting agent",
+          "RAG knowledge base development",
+          "Fine-tuning and agent orchestration",
+          "OpenCLAW agent runtime setup",
+          "Workflow automation and API integrations",
           "Growth system audit",
-          "Automation and systems integrations",
           "Product and MVP build",
         ],
         hasOfferCatalog: {
           "@type": "OfferCatalog",
           name: "AI product and growth consulting services",
           itemListElement: [
+            { "@type": "Offer", itemOffered: { "@type": "Service", name: "Custom AI Assistant" } },
+            { "@type": "Offer", itemOffered: { "@type": "Service", name: "Customer Support (SAV) Agent" } },
+            { "@type": "Offer", itemOffered: { "@type": "Service", name: "B2B Prospecting Agent" } },
+            { "@type": "Offer", itemOffered: { "@type": "Service", name: "OpenCLAW Agent Runtime" } },
+            { "@type": "Offer", itemOffered: { "@type": "Service", name: "RAG Knowledge Base" } },
+            { "@type": "Offer", itemOffered: { "@type": "Service", name: "Workflow Automation" } },
             { "@type": "Offer", itemOffered: { "@type": "Service", name: "AI Workflow Sprint" } },
-            { "@type": "Offer", itemOffered: { "@type": "Service", name: "Growth system audit" } },
-            { "@type": "Offer", itemOffered: { "@type": "Service", name: "AI Assistant Build" } },
+            { "@type": "Offer", itemOffered: { "@type": "Service", name: "Growth System Audit" } },
             { "@type": "Offer", itemOffered: { "@type": "Service", name: "Product / MVP Build" } },
           ],
         },
@@ -111,6 +121,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {children}
         </LayoutShell>
         <CookieConsent />
+        <Analytics />
       </body>
     </html>
   );

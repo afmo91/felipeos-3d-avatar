@@ -16,10 +16,11 @@ type Props = {
  */
 export default function LayoutShell({ children, header, footer }: Props) {
   const pathname = usePathname();
-  const isHome = pathname === "/";
+  // Home (full-screen Signal experience) and landing pages (their own chrome)
+  // render without the shared header/footer.
+  const isBare = pathname === "/" || pathname.startsWith("/lp");
 
-  if (isHome) {
-    // Homepage is a full-screen Signal experience — no shared chrome
+  if (isBare) {
     return <>{children}</>;
   }
 
