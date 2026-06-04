@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getBaseCV, type BaseCV } from "@/lib/cv";
 import { getBookingHref, getBookingTarget, hasBookingUrl } from "@/lib/booking";
-import { readActivePublicCV } from "@/lib/supabase";
+import { readActivePublicCV } from "@/lib/supabase/browser";
 
 export const metadata: Metadata = {
   title: "Public CV",
@@ -37,7 +37,7 @@ export default async function PublicCVPage() {
         </div>
 
         <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-          {["12+ years", "+25% conversion", "-30% CAC", "EUR200K+ recovered", "EUR3M+ budget"].map((metric) => (
+          {["12+ years", "+25% conversion", "-30% CAC", "€200K+ recovered", "€3M+ budget"].map((metric) => (
             <div className="stat-card" key={metric}>
               <p className="stat-value text-2xl">{metric}</p>
               <p className="stat-label">selected signal</p>

@@ -25,7 +25,7 @@ const items: JourneyItem[] = [
     id: "what-i-do",
     kicker: "Product · Growth · AI Systems",
     label: "What I Do",
-    metrics: ["12+ years", "0->1", "AI workflows", "Analytics"],
+    metrics: ["12+ years", "0→1", "AI workflows", "Analytics"],
     note: "Start with the messy system, then find the first signal worth shipping around.",
     scan: "Signal lock",
     side: "left",

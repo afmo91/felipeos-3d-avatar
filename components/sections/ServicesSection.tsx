@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 
 const services = [
   {
-    metric: "0->1",
+    metric: "0→1",
     proof: "From ambiguous opportunity to scoped MVP, roadmap, specs, and release rhythm.",
     title: "AI Product Strategy & MVP Definition",
   },

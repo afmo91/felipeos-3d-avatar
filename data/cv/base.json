@@ -20,7 +20,7 @@
       "company": "Spotz.pro",
       "role": "Founder / Product Builder",
       "caseStudyHref": "/#proof-of-work",
-      "metrics": ["AI SaaS platform", "6 paid media channels", "0->1 product build"],
+      "metrics": ["AI SaaS platform", "6 paid media channels", "0→1 product build"],
       "bullets": [
         "Built an AI-powered SaaS platform for managing and optimizing paid media workflows across Google, Meta, LinkedIn, TikTok, X and Pinterest.",
         "Designed dashboards, API integrations, lifecycle metrics and AI recommendation workflows.",
@@ -32,26 +32,26 @@
       "company": "Adamo Telecom",
       "role": "Growth Product Manager / Digital Acquisition",
       "caseStudyHref": "/#proof-of-work",
-      "metrics": ["500K+ customers", "EUR3M+ annual media budget", "+25% conversion", "-30% CAC", "same-day activation"],
+      "metrics": ["500K+ customers", "€3M+ annual media budget", "+25% conversion", "-30% CAC", "same-day activation"],
       "bullets": [
         "Led digital acquisition and growth product initiatives for a telecom operator with 500K+ customers.",
-        "Managed EUR3M+ annual performance marketing budget across Google Ads, Meta Ads and programmatic.",
+        "Managed €3M+ annual performance marketing budget across Google Ads, Meta Ads and programmatic.",
         "Improved conversion by 25% and reduced CAC by 30% through experimentation.",
         "Reduced onboarding time from 5 days to same-day activation.",
         "Reduced first-month churn by 15% through onboarding improvements.",
-        "Recovered EUR200K+ in wasted spend with attribution and performance monitoring."
+        "Recovered €200K+ in wasted spend with attribution and performance monitoring."
       ]
     },
     {
       "company": "Segmentta",
       "role": "Co-founder / Product & Growth Consultant",
       "caseStudyHref": "/#experience",
-      "metrics": ["30+ institutional clients", "EUR500K+ annual revenue", "team of 10"],
+      "metrics": ["30+ institutional clients", "€500K+ annual revenue", "team of 10"],
       "bullets": [
         "Co-founded and scaled a B2B consulting business serving institutional clients in regulated markets.",
         "Worked with 30+ institutional clients including healthcare and enterprise companies.",
         "Built and managed a team of 10 across commercial, logistics and marketing operations.",
-        "Grew annual revenue to EUR500K+ before exiting through sale of ownership stake."
+        "Grew annual revenue to €500K+ before exiting through sale of ownership stake."
       ]
     },
     {
@@ -66,15 +66,15 @@
     }
   ],
   "selectedAchievements": [
-    "Built a 0->1 AI SaaS platform for multi-channel paid media workflows.",
-    "Managed EUR3M+ annual performance marketing budget across Google Ads, Meta Ads and programmatic.",
+    "Built a 0→1 AI SaaS platform for multi-channel paid media workflows.",
+    "Managed €3M+ annual performance marketing budget across Google Ads, Meta Ads and programmatic.",
     "Improved conversion by 25% and reduced CAC by 30% through experimentation.",
     "Reduced onboarding time from 5 days to same-day activation.",
-    "Recovered EUR200K+ in wasted spend with attribution and performance monitoring.",
-    "Co-founded and scaled a B2B consulting business to EUR500K+ annual revenue before exit."
+    "Recovered €200K+ in wasted spend with attribution and performance monitoring.",
+    "Co-founded and scaled a B2B consulting business to €500K+ annual revenue before exit."
   ],
   "skills": {
-    "Product": ["discovery", "prioritization", "roadmapping", "AI product strategy", "0->1 product building"],
+    "Product": ["discovery", "prioritization", "roadmapping", "AI product strategy", "0→1 product building"],
     "Growth": ["paid acquisition", "funnel optimization", "experimentation", "pricing", "CAC/ROAS", "attribution"],
     "AI/Automation": ["AI assistants", "agentic workflows", "process automation", "API integrations", "document workflows"],
     "Analytics": ["dashboards", "lifecycle metrics", "observability", "CRM and campaign reporting"],

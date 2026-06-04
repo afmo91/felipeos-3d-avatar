@@ -1,10 +1,10 @@
 import { getPosts } from "@/lib/content";
 import type { MetadataRoute } from "next";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://felipemejia.com";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://3d.felipeos.com";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const staticRoutes = ["", "/about", "/portfolio", "/resume", "/blog", "/contact"].map((route) => ({
+  const staticRoutes = ["", "/cv", "/about", "/portfolio", "/resume", "/blog", "/contact"].map((route) => ({
     changeFrequency: "monthly" as const,
     lastModified: new Date(),
     priority: route === "" ? 1 : 0.8,

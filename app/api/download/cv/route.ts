@@ -1,7 +1,7 @@
 import React from "react";
 import { Document, Page, StyleSheet, Text, View, renderToBuffer } from "@react-pdf/renderer";
 import { getBaseCV, type BaseCV } from "@/lib/cv";
-import { readActivePublicCV } from "@/lib/supabase";
+import { readActivePublicCV } from "@/lib/supabase/browser";
 
 export const runtime = "nodejs";
 

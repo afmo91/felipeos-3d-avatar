@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { getBaseCV } from "@/lib/cv";
-import { hasSupabaseServerConfig } from "@/lib/supabase";
+import { hasSupabaseServerConfig } from "@/lib/supabase/server";
 
 export const metadata = { title: "Admin | Felipe OS" };
 
@@ -50,7 +50,7 @@ export default async function AdminPage() {
               supabase/schema.sql
             </code>
             <p style={{ color: "var(--muted)", lineHeight: 1.7, marginTop: "0.5rem" }}>
-              Defines leads, public_cv and cv_versions. Use the service role only from server routes.
+              Defines leads, public_cv and cv_versions. Use the secret API key only from server routes.
             </p>
           </div>
         </section>

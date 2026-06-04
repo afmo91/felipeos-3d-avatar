@@ -1,4 +1,4 @@
-import { insertLead } from "@/lib/supabase";
+import { insertLead } from "@/lib/supabase/server";
 
 export const runtime = "nodejs";
 

@@ -47,4 +47,4 @@ create policy "Public can read active CV"
   using (is_active = true);
 
 -- Lead inserts and CV administration should happen through server routes
--- using SUPABASE_SERVICE_ROLE_KEY, not directly from anonymous clients.
+-- using a Supabase secret API key (sb_secret_...), not directly from public clients.

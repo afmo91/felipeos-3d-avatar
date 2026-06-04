@@ -72,9 +72,11 @@ function IntroStage() {
     <div className="pointer-events-none flex h-full items-end justify-center p-5 pb-8 text-center md:p-8">
       <div className="max-w-xl">
         <p className="font-mono text-xs uppercase tracking-[0.18em] text-cyan-100/60">Felipe OS guide</p>
-        <h1 className="mt-3 text-2xl font-semibold text-white md:text-4xl">Chat first. Systems behind it.</h1>
+        <h1 className="mt-3 text-2xl font-semibold text-white md:text-4xl">
+          Ask for an AI system. See the plan take shape.
+        </h1>
         <p className="mx-auto mt-3 max-w-lg text-sm leading-6 text-slate-300/75 md:text-base">
-          Ask for services, proof, recruiting context, or a personalized AI systems plan.
+          Services, proof, recruiting context and personalized AI system plans — all through one guided conversation.
         </p>
       </div>
     </div>
@@ -138,14 +140,20 @@ function ServicesStage({ onAction, stage }: Props) {
         </div>
         <div className="mt-5 flex flex-wrap gap-2">
           <StageButton
-            action={{ type: "start_builder", label: selected.cta, selectedService: selected.id }}
+            action={{ type: "start_builder", label: "Start this", selectedService: selected.id }}
             onAction={onAction}
             variant="primary"
           >
-            {selected.cta}
+            Start this
           </StageButton>
-          <StageButton action={{ type: "book", label: "Book a 30-min call" }} onAction={onAction}>
-            Book a 30-min call
+          <StageButton
+            action={{ type: "start_builder", label: "Build my plan", selectedService: selected.id }}
+            onAction={onAction}
+          >
+            Build my plan
+          </StageButton>
+          <StageButton action={{ type: "book", label: "Book a call" }} onAction={onAction}>
+            Book a call
           </StageButton>
         </div>
       </div>
@@ -332,11 +340,14 @@ function SolutionStage({ onAction, stage }: Props) {
             <p className="mt-2 text-sm font-semibold text-white">{plan.nextStep}</p>
           </div>
           <div className="mt-5 flex flex-wrap gap-2">
-            <StageButton action={{ type: "save_plan", label: "Save plan" }} onAction={onAction} variant="primary">
-              Save plan
+            <StageButton action={{ type: "save_plan", label: "Save this plan" }} onAction={onAction} variant="primary">
+              Save this plan
             </StageButton>
             <StageButton action={{ type: "book", label: "Book a 30-min call" }} onAction={onAction}>
               Book a 30-min call
+            </StageButton>
+            <StageButton action={{ type: "adjust_plan", label: "Adjust plan" }} onAction={onAction}>
+              Adjust plan
             </StageButton>
           </div>
         </>
@@ -366,6 +377,16 @@ function ContactStage({ onAction }: Props) {
           <StageButton action={{ type: "email", label: "Email Felipe" }} onAction={onAction}>
             Email Felipe
           </StageButton>
+        </div>
+        <div className="mt-5 rounded-lg border border-cyan-300/15 bg-cyan-300/[0.06] p-4">
+          <p className="text-sm font-semibold text-white">30-minute discovery call · Paris working hours</p>
+          <ul className="mt-3 grid gap-2 text-sm leading-6 text-slate-300">
+            {["workflow/problem", "current tools", "possible system", "practical next step"].map((item) => (
+              <li className="pl-3 before:-ml-3 before:pr-2 before:text-cyan-100/60 before:content-['•']" key={item}>
+                {item}
+              </li>
+            ))}
+          </ul>
         </div>
         <div className="mt-5 grid gap-3 text-sm text-slate-300">
           <a className="rounded-lg border border-white/10 bg-white/[0.04] p-3 transition hover:text-white" href={`mailto:${EMAIL}`}>
@@ -403,7 +424,7 @@ function StageScroll({ children }: { children: React.ReactNode }) {
 }
 
 function MetricStrip() {
-  const metrics = ["12+ years", "+25% conversion", "-30% CAC", "EUR200K+ recovered", "EUR3M+ budget"];
+  const metrics = ["12+ years", "+25% conversion", "-30% CAC", "€200K+ recovered", "€3M+ budget"];
   return (
     <div className="mb-5 grid gap-2 sm:grid-cols-2 xl:grid-cols-5">
       {metrics.map((metric) => (

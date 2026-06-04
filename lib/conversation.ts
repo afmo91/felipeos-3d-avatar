@@ -32,6 +32,7 @@ export type ChatAction =
     }
   | { type: "start_builder"; label: string; seedUseCase?: PlanCategory; selectedService?: ServiceId }
   | { type: "save_plan"; label: string }
+  | { type: "adjust_plan"; label: string }
   | { type: "book"; label: string }
   | { type: "email"; label: string }
   | { type: "download_cv"; label: string };
@@ -60,6 +61,13 @@ export type PersistedConversation = {
   suggestions: string[];
   stage: StageState;
   visualTopic: VisualTopic;
+};
+
+export type RouteResponse = {
+  actions: ChatAction[];
+  stagePatch?: Partial<StageState>;
+  text: string;
+  topic: VisualTopic;
 };
 
 export const STORAGE_KEY = "felipe-os-chat-state-v1";
@@ -178,13 +186,17 @@ const actionSets = {
   ] satisfies ChatAction[],
 };
 
-export function initialRoute(input: string) {
+export function initialRoute(input: string): RouteResponse | null {
   if (exact(input, ["I need an AI system"])) {
     return {
       text:
-        "Good starting point. I usually begin by mapping the workflow, identifying where an agent can act, and shipping a small prototype in 1-2 weeks.",
+        "Good starting point. I usually begin by mapping the workflow, identifying where an agent can act, and shipping a small prototype in 1–2 weeks.",
       topic: "ai" as VisualTopic,
       actions: actionSets.aiSystem,
+      stagePatch: {
+        activeTopic: "services",
+        selectedService: "ai-workflow-sprint",
+      },
     };
   }
 
@@ -194,15 +206,22 @@ export function initialRoute(input: string) {
         "I can show representative systems around paid media, CRM automation, support assistants, document workflows and growth audits.",
       topic: "results" as VisualTopic,
       actions: actionSets.proof,
+      stagePatch: {
+        activeTopic: "proof",
+        selectedProofCase: "paid-media-operating-layer",
+      },
     };
   }
 
   if (exact(input, ["I'm recruiting"])) {
     return {
       text:
-        "My profile combines product, growth and AI systems: 0 to 1 product building, analytics, paid acquisition, dashboards and cross-functional execution.",
+        "My profile combines product, growth and AI systems: 0→1 product building, analytics, paid acquisition, dashboards and cross-functional execution.",
       topic: "experience" as VisualTopic,
       actions: actionSets.recruiting,
+      stagePatch: {
+        activeTopic: "recruiting",
+      },
     };
   }
 
@@ -212,6 +231,9 @@ export function initialRoute(input: string) {
         "Perfect. Pick a 30-minute slot and I'll use it to understand your workflow, growth problem or product opportunity.",
       topic: "contact" as VisualTopic,
       actions: actionSets.booking,
+      stagePatch: {
+        activeTopic: "contact",
+      },
     };
   }
 
@@ -221,6 +243,9 @@ export function initialRoute(input: string) {
         "I build AI assistants, agentic workflows, automation layers, dashboards, growth systems and MVPs that connect real business operations.",
       topic: "product" as VisualTopic,
       actions: actionSets.build,
+      stagePatch: {
+        activeTopic: "services",
+      },
     };
   }
 
@@ -335,5 +360,5 @@ Context:
 - Services: AI Workflow Sprint, AI Assistant Build, Growth System Audit, Product / MVP Build
 - Proof themes: AI paid media operating layer, B2B lead generation and CRM automation, AI support assistant, AI admin/document assistant, product website/CMS/conversion systems, growth audit and experimentation systems
 - Experience: Spotz.pro AI paid media SaaS; Adamo Telecom growth product and digital acquisition; Segmentta B2B consulting
-- Results include +25% conversion, -30% CAC, same-day activation, EUR200K+ recovered waste and EUR3M+ annual media budget
+- Results include +25% conversion, -30% CAC, same-day activation, €200K+ recovered waste and €3M+ annual media budget
 - Contact: felipe.mejia@spotz.pro, LinkedIn https://www.linkedin.com/in/felipemejiaosorio/, GitHub https://github.com/afmo91`;

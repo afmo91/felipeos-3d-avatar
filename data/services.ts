@@ -21,7 +21,7 @@ export const services: ServiceOffer[] = [
     oneLiner: "Map one high-value workflow, design the agentic process and ship a working prototype.",
     bestFor: "Teams with repetitive research, support, admin, CRM or reporting tasks.",
     deliverables: ["workflow audit", "agent map", "prototype", "integration plan"],
-    timeline: "1-2 weeks",
+    timeline: "1–2 weeks",
     cta: "Start a workflow sprint",
   },
   {
@@ -36,7 +36,7 @@ export const services: ServiceOffer[] = [
       "knowledge base connection",
       "human handoff logic",
     ],
-    timeline: "2-4 weeks",
+    timeline: "2–4 weeks",
     cta: "Build an assistant",
   },
   {
@@ -51,7 +51,7 @@ export const services: ServiceOffer[] = [
       "experiment backlog",
       "dashboard recommendations",
     ],
-    timeline: "5-10 working days",
+    timeline: "5–10 working days",
     cta: "Request a growth audit",
   },
   {
@@ -61,7 +61,7 @@ export const services: ServiceOffer[] = [
       "Turn a business process or product idea into a usable web app, dashboard or internal tool.",
     bestFor: "Founders, operators and teams that need a fast, practical product build.",
     deliverables: ["product scope", "UX flow", "MVP build", "deployment plan"],
-    timeline: "3-6 weeks",
+    timeline: "3–6 weeks",
     cta: "Discuss a product build",
   },
 ];

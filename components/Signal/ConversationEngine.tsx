@@ -34,6 +34,8 @@ import {
 import { getBookingHref, hasBookingUrl } from "@/lib/booking";
 import type { BustState } from "./BustScene";
 
+const AUDIO_STORAGE_KEY = "felipe-os-audio-enabled-v1";
+
 let msgCounter = 0;
 function uid() {
   msgCounter += 1;
@@ -109,6 +111,58 @@ function cloneDefaultStage(): StageState {
     ...defaultStage,
     builderDraft: {},
   };
+}
+
+function stagePatchFromTopic(topic: VisualTopic): Partial<StageState> | undefined {
+  if (topic === "results") {
+    return {
+      activeTopic: "proof",
+      selectedProofCase: "paid-media-operating-layer",
+    };
+  }
+
+  if (topic === "experience") {
+    return { activeTopic: "recruiting" };
+  }
+
+  if (topic === "contact") {
+    return { activeTopic: "contact" };
+  }
+
+  if (topic === "growth") {
+    return {
+      activeTopic: "services",
+      selectedService: "growth-system-audit",
+    };
+  }
+
+  if (topic === "product") {
+    return {
+      activeTopic: "services",
+      selectedService: "product-mvp-build",
+    };
+  }
+
+  if (topic === "ai") {
+    return {
+      activeTopic: "services",
+      selectedService: "ai-workflow-sprint",
+    };
+  }
+
+  return undefined;
+}
+
+type FelipeOSEventName =
+  | "chat_chip_clicked"
+  | "plan_started"
+  | "lead_submitted"
+  | "booking_clicked"
+  | "cv_downloaded";
+
+function emitFelipeOSEvent(name: FelipeOSEventName, detail: Record<string, unknown> = {}) {
+  window.dispatchEvent(new CustomEvent(name, { detail }));
+  window.dispatchEvent(new CustomEvent("felipe-os:event", { detail: { name, ...detail } }));
 }
 
 function readPersisted(): PersistedConversation | null {
@@ -335,11 +389,22 @@ export function useConversation(): ConvHook {
         .map((message) => ({
           role: message.role === "user" ? "user" : "assistant",
           content: message.text,
-        }));
+      }));
       startedRef.current = saved.messages.length > 0;
     }
+
+    try {
+      const savedAudio = window.localStorage.getItem(AUDIO_STORAGE_KEY);
+      if (savedAudio === "true") {
+        audioEnabledRef.current = true;
+        setAudioEnabled(true);
+        unlockAudio();
+      }
+    } catch {
+      // localStorage may be blocked.
+    }
     setHydrated(true);
-  }, []);
+  }, [unlockAudio]);
 
   useEffect(() => {
     if (!hydrated) return;
@@ -353,6 +418,15 @@ export function useConversation(): ConvHook {
       } satisfies PersistedConversation),
     );
   }, [hydrated, messages, stage, suggestions, visualTopic]);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    try {
+      window.localStorage.setItem(AUDIO_STORAGE_KEY, String(audioEnabled));
+    } catch {
+      // localStorage may be blocked.
+    }
+  }, [audioEnabled, hydrated]);
 
   const setAudio = useCallback(
     (enabled: boolean) => {
@@ -368,10 +442,23 @@ export function useConversation(): ConvHook {
   );
 
   const typewrite = useCallback(async (msgId: string, text: string) => {
-    const total = text.length;
-    const interval = Math.max(10, Math.min(34, estimateDuration(text) / Math.max(total, 1)));
+    const shouldRevealImmediately =
+      document.visibilityState !== "visible" ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    for (let index = 1; index <= total; index += 1) {
+    if (shouldRevealImmediately) {
+      setMessages((prev) =>
+        prev.map((msg) => (msg.id === msgId ? { ...msg, text } : msg)),
+      );
+      return;
+    }
+
+    const total = text.length;
+    const steps = Math.max(1, Math.min(10, Math.ceil(total / 16)));
+    const interval = Math.max(24, Math.min(90, estimateDuration(text) / steps));
+
+    for (let step = 1; step <= steps; step += 1) {
+      const index = Math.ceil((total * step) / steps);
       setMessages((prev) =>
         prev.map((msg) => (msg.id === msgId ? { ...msg, text: text.slice(0, index) } : msg)),
       );
@@ -447,11 +534,17 @@ export function useConversation(): ConvHook {
   }, [deliverFelipe]);
 
   useEffect(() => {
-    if (!hydrated || !assembled || startedRef.current || messagesRef.current.length > 0) return;
-    void (async () => {
-      await sleep(300);
-      await deliverInitial();
-    })();
+    if (!hydrated || startedRef.current || messagesRef.current.length > 0) return;
+
+    const timer = window.setTimeout(
+      () => {
+        if (startedRef.current || messagesRef.current.length > 0) return;
+        void deliverInitial();
+      },
+      assembled ? 300 : 900,
+    );
+
+    return () => window.clearTimeout(timer);
   }, [assembled, deliverInitial, hydrated]);
 
   const handleAssembled = useCallback(() => {
@@ -508,7 +601,7 @@ export function useConversation(): ConvHook {
       setLoading(false);
       await deliverFelipe(
         {
-          text: "Good. What tools does this workflow touch today?",
+          text: "Good. What tools do you use today?",
           topic: "ai",
           suggestedReplies: toolOptions,
         },
@@ -529,7 +622,7 @@ export function useConversation(): ConvHook {
       setLoading(false);
       await deliverFelipe(
         {
-          text: "Who is the workflow for?",
+          text: "Who is this workflow for?",
           topic: "product",
           suggestedReplies: audienceOptions,
         },
@@ -577,9 +670,9 @@ export function useConversation(): ConvHook {
             "I drafted a local preview plan. It is enough to discuss scope before saving anything or booking a first sprint.",
           topic: "ai",
           actionButtons: [
-            { type: "save_plan", label: "Save plan" },
+            { type: "save_plan", label: "Save this plan" },
             { type: "book", label: "Book a 30-min call" },
-            { type: "stage", label: "See services", topic: "services" },
+            { type: "adjust_plan", label: "Adjust plan" },
           ],
         },
         { dynamicTts: true },
@@ -670,7 +763,10 @@ export function useConversation(): ConvHook {
       if (!response?.ok) {
         await deliverFelipe(
           {
-            text: "I couldn't save it, but you can still book a call.",
+            text:
+              response?.status === 503
+                ? "I kept the preview local. The best next step is a 30-minute call to scope the workflow and tools."
+                : "The save did not go through, but the plan preview is still here. The best next step is a 30-minute call.",
             topic: "contact",
             actionButtons: [
               { type: "book", label: "Book a 30-min call" },
@@ -681,6 +777,11 @@ export function useConversation(): ConvHook {
         );
         return;
       }
+
+      emitFelipeOSEvent("lead_submitted", {
+        serviceInterest: draft.serviceInterest,
+        useCase: draft.useCase,
+      });
 
       await deliverFelipe(
         {
@@ -708,6 +809,12 @@ export function useConversation(): ConvHook {
         setAudio(true);
       } else if (isAudioOptOut(input)) {
         setAudio(false);
+      } else if (audioEnabledRef.current) {
+        unlockAudio();
+      }
+
+      if (INITIAL_CHIPS.includes(input)) {
+        emitFelipeOSEvent("chat_chip_clicked", { label: input });
       }
 
       const userMsg: Message = { id: uid(), role: "user", text: input };
@@ -743,6 +850,7 @@ export function useConversation(): ConvHook {
               },
               { dynamicTts: true },
             );
+            if (routed.stagePatch) updateStage(routed.stagePatch);
             return;
           }
 
@@ -773,13 +881,15 @@ export function useConversation(): ConvHook {
             },
             { dynamicTts: true },
           );
+          const stagePatch = stagePatchFromTopic(topic);
+          if (stagePatch) updateStage(stagePatch);
         } finally {
           setLoading(false);
           busyRef.current = false;
         }
       })();
     },
-    [askBuilderUseCase, deliverFelipe, handleBuilderAnswer, hydrated, saveLeadFromEmail, setAudio],
+    [askBuilderUseCase, deliverFelipe, handleBuilderAnswer, hydrated, saveLeadFromEmail, setAudio, unlockAudio, updateStage],
   );
 
   const handleAction = useCallback(
@@ -794,6 +904,10 @@ export function useConversation(): ConvHook {
       }
 
       if (action.type === "start_builder") {
+        emitFelipeOSEvent("plan_started", {
+          selectedService: action.selectedService,
+          seedUseCase: action.seedUseCase,
+        });
         void askBuilderUseCase({
           serviceInterest: action.selectedService,
           useCase: action.seedUseCase,
@@ -813,7 +927,14 @@ export function useConversation(): ConvHook {
         return;
       }
 
+      if (action.type === "adjust_plan") {
+        emitFelipeOSEvent("plan_started", { source: "adjust_plan" });
+        void askBuilderUseCase(stageRef.current.builderDraft);
+        return;
+      }
+
       if (action.type === "book") {
+        emitFelipeOSEvent("booking_clicked", { label: action.label });
         updateStage({ activeTopic: "contact" });
         const href = getBookingHref();
         if (hasBookingUrl()) {
@@ -831,6 +952,7 @@ export function useConversation(): ConvHook {
       }
 
       if (action.type === "download_cv") {
+        emitFelipeOSEvent("cv_downloaded", { source: "chat" });
         updateStage({ activeTopic: "cv" });
         window.open("/api/download/cv", "_blank", "noopener,noreferrer");
       }
