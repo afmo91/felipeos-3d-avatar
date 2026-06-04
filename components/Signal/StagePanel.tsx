@@ -118,7 +118,7 @@ function ServicesStage({ onAction, stage }: Props) {
                 </span>
               </div>
               <p className="mt-2 text-sm leading-6 text-slate-300/75">{service.oneLiner}</p>
-              <p className="mt-2 text-xs font-semibold text-cyan-100">{service.priceFrom}</p>
+              <p className="mt-2 text-xs font-semibold text-cyan-100">{service.priceRange}</p>
             </button>
           );
         })}
@@ -128,7 +128,7 @@ function ServicesStage({ onAction, stage }: Props) {
         <p className="font-mono text-xs uppercase tracking-[0.16em] text-cyan-100/55">Selected offer</p>
         <div className="mt-2 flex flex-wrap items-baseline justify-between gap-2">
           <h3 className="text-xl font-semibold text-white">{selected.title}</h3>
-          <span className="text-sm font-semibold text-cyan-100">{selected.priceFrom} · {selected.timeline}</span>
+          <span className="text-sm font-semibold text-cyan-100">{selected.priceRange} · {selected.timeline}</span>
         </div>
         <p className="mt-2 text-sm leading-6 text-slate-300">{selected.bestFor}</p>
         <div className="mt-4 flex flex-wrap gap-2">
